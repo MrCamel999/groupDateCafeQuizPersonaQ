@@ -484,6 +484,32 @@ function updateQuestionCounter() {
     document.getElementById('question-counter').innerText = `Question ${questionCount} of ${totalQuestions}`;
 }
 
+const characterImageMap = {
+    "Fuuka Yamagishi": "images/Fuuka_Yamagishi.gif",
+    "Margaret": "images/Margaret.jpg",
+    "Marie": "images/Marie.jpg",
+    "Naoto Shirogane": "images/Naoto_Shirogane.jpg",
+    "Rei": "images/Rei.jpg",
+    "Yukiko Amagi": "images/Yukiko_Amagi.jpg",
+    "Akihiko Sanada": "images/Akihiko_Sanada.jpg",
+    "Junpei Iori": "images/Junpei_Iori.png",
+    "Ken Amada": "images/Ken_Amada.jpg",
+    "Koromaru": "images/Koromaru.jpg",
+    "Yu Narukami": "images/Yu_Narukami.jpg",
+    "Teddie": "images/Teddie.jpg",
+    "Aigis": "images/Aigis.jpg",
+    "Chie Satonaka": "images/Chie_Satonaka.jpg",
+    "Elizabeth": "images/Elizabeth.jpg",
+    "Mitsuru Kirijo": "images/Mitsuru_Kirijo.jpg",
+    "Rise Kujikawa": "images/Rise_Kujikawa.jpg",
+    "Yukari Takeba": "images/Yukari_Takeba.jpg",
+    "Kanji Tatsumi": "images/Kanji_Tatsumi.jpg",
+    "Makoto Yuki": "images/Makoto_Yuki.jpg",
+    "Shinjiro Aragaki": "images/Shinjiro_Aragaki.jpg",
+    "Theodore": "images/Theodore.jpg",
+    "Zen": "images/Zen.jpg",
+    "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
+};
 function displayFinalOutput() {
     // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
@@ -497,6 +523,19 @@ function displayFinalOutput() {
     const resultContainer = document.getElementById('result');
     const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
     resultContainer.innerHTML = `<h2>${resultText}</h2>`;
+
+    // Display the image for the final character, if one is determined
+    if (finalCharacter) {
+        const imagePath = characterImageMap[finalCharacter];
+        if (imagePath) {
+            const image = document.createElement('img');
+            image.src = imagePath;
+            image.alt = finalCharacter;
+            resultContainer.appendChild(image);
+        } else {
+            console.log('No image found for ' + finalCharacter);
+        }
+    }
 }
 
 // Adding the question counter element dynamically
