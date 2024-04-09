@@ -525,55 +525,38 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    // Check if it's prematurely trying to display the final output
-    if (!finalCharacter && questionCount < 10) {
-        // Determine the correct NineTen group based on the current state
-        const nineTenGroup = currentGroupKey + 'NineTen';
-
-        // Ensure we're working with the correct group for questions 9 and 10
-        if (!questionGroups[nineTenGroup]) {
-            console.error('NineTen group not found:', nineTenGroup);
-            return;
-        }
-
-        // Check the state and decide whether to show question 9 or 10
+    if (!finalCharacter && questionCount < 9) { // If fewer than 9 questions have been asked
         if (!currentGroupKey.endsWith('NineTen')) {
-            currentGroupKey += 'NineTen'; // Switch to the NineTen group if not already done
-            // Directly display question 9 as it should be the next logical step
-            const question9Data = questionGroups[currentGroupKey][0];
-            displayQuestionContent(question9Data);
-        } else {
-            // If we're already in the NineTen group, this means question 9 did not lead to a final character,
-            // and we should display question 10 instead
-            const question10Data = questionGroups[currentGroupKey][1];
-            displayQuestionContent(question10Data);
+            currentGroupKey += 'NineTen'; // Ensure we are targeting the NineTen group for questions 9 and 10.
         }
-        return; // Prevent going to the actual final output
-    }
+        // Ensure the next question is fetched from the current group,
+        // which should now be one of the NineTen groups.
+        displayQuestion();
+    } else {
+        // Update the question counter to show "Final Result" surrounded by heart emojis
+        const questionCounter = document.getElementById('question-counter');
+        questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
 
-    // Update the question counter to show "Final Result" surrounded by heart emojis
-    const questionCounter = document.getElementById('question-counter');
-    questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
+        // Hide the question and answers from the display
+        document.getElementById('question').style.display = 'none';
+        document.getElementById('answers').style.display = 'none';
 
-    // Hide the question and answers from the display
-    document.getElementById('question').style.display = 'none';
-    document.getElementById('answers').style.display = 'none';
+        // Display the final result in the result container
+        const resultContainer = document.getElementById('result');
+        const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
+        resultContainer.innerHTML = `<h2>${resultText}</h2>`;
 
-    // Display the final result in the result container
-    const resultContainer = document.getElementById('result');
-    const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
-    resultContainer.innerHTML = `<h2>${resultText}</h2>`;
-
-    // Display the image for the final character, if one is determined
-    if (finalCharacter) {
-        const imagePath = characterImageMap[finalCharacter];
-        if (imagePath) {
-            const image = document.createElement('img');
-            image.src = imagePath;
-            image.alt = finalCharacter;
-            resultContainer.appendChild(image);
-        } else {
-            console.log('No image found for ' + finalCharacter);
+        // Display the image for the final character, if one is determined
+        if (finalCharacter) {
+            const imagePath = characterImageMap[finalCharacter];
+            if (imagePath) {
+                const image = document.createElement('img');
+                image.src = imagePath;
+                image.alt = finalCharacter;
+                resultContainer.appendChild(image);
+            } else {
+                console.log('No image found for ' + finalCharacter);
+            }
         }
     }
 }
