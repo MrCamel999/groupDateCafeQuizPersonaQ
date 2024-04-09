@@ -584,31 +584,6 @@ function displayFinalOutput() {
         }
     }
 
-    function displayQuestionContent(questionText, answers) {
-    const questionContainer = document.getElementById('question');
-    const answersContainer = document.getElementById('answers');
-
-    questionContainer.innerHTML = `<h2>${questionText}</h2>`;
-    answersContainer.innerHTML = ''; // Clear previous answers
-
-    answers.forEach(answer => {
-        const button = document.createElement('button');
-        button.textContent = answer.text;
-        button.addEventListener('click', () => {
-            if (answer.action) {
-                answer.action(); // For handling "Something else..." selection
-            } else {
-                handleAnswer(answer);
-            }
-        });
-        answersContainer.appendChild(button);
-    });
-
-    // Ensure the question and answers are displayed
-    document.getElementById('question').style.display = '';
-    document.getElementById('answers').style.display = '';
-}
-
     // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
     questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
