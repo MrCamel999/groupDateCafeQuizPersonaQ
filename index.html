@@ -440,38 +440,14 @@ function displayQuestion() {
 }
 
 function handleAnswer(answer) {
-    if (['group1', 'group2', 'group3', 'group4'].includes(currentGroupKey)) {
-        // Increment the question index for groups 1-4
-        currentQuestionIndex++;
-
-        // Check if the answer leads to a character result
-        if (answer.person) {
-            hasChosenCharacter = true; // A character result has been chosen
-            finalCharacter = answer.person;
-        }
-
-        if (currentQuestionIndex === 6 && !hasChosenCharacter) {
-            // If we've asked 6 questions without a character result, ensure the next question is the 9th
-            // Assuming the 9th question is always at index 8 in the array (0-based indexing)
-            currentGroupKey = currentGroupKey; // Remain in the current group
-            currentQuestionIndex = 7; // Set index to 8th position for the next call to display the 9th question
-        } else if (answer.text === "Something else...") {
-            // Logic for "Something else...", directly jump to the 10th question
-            // Assuming the 10th question is always at index 9 in the array (0-based indexing)
-            currentGroupKey = currentGroupKey; // Remain in the current group
-            currentQuestionIndex = 8; // Set index to 9th position for "Something else..."
-        }
-    } else {
-        // Reset for non-specific group handling or other logic as needed
-        resetQuestionTracking();
+    if (answer.group) {
+        currentGroupKey = answer.group;
+    } else if (answer.person) {
+        finalCharacter = answer.person;
+        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
     }
 
-    displayQuestion(); // Proceed to display the next question based on the updated group and index
-}
-
-function resetQuestionTracking() {
-    currentQuestionIndex = 0; // Reset the index when moving to a new group or finalizing
-    hasChosenCharacter = false; // Reset the character choice flag
+    displayQuestion();
 }
 
 function shuffleArray(array) {
@@ -483,19 +459,24 @@ function shuffleArray(array) {
 
 function getQuestionFromGroup(groupKey) {
     let group = questionGroups[groupKey];
-    let questionsToConsider = [];
+    let questionData;
 
-    // Only shuffle and consider the first 6 questions if it's one of the main groups
-    if (Array.isArray(group) && ['group1', 'group2', 'group3', 'group4'].includes(groupKey)) {
-        let shuffled = shuffleArray(group.slice(0, 6)); // Shuffle only the first 6 questions
-        questionsToConsider = shuffled.concat(group.slice(6)); // Add back any remaining questions in their original order
-    } else {
-        questionsToConsider = group;
+    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
+    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
+        shuffleArray(group);
     }
 
-    // Find the first unasked question in the adjusted list
-    let questionData = questionsToConsider.find(q => !askedQuestions.has(q.questionText));
-    if (questionData) askedQuestions.add(questionData.questionText);
+    if (Array.isArray(group)) {
+        // Find the first question that hasn't been asked yet
+        questionData = group.find(q => !askedQuestions.has(q.questionText));
+
+        // If a question is found, mark it as asked
+        if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
+    }
+
     return questionData;
 }
 
