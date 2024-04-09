@@ -573,13 +573,42 @@ function displayFinalOutput() {
 }
 
 function displayQuestionDirectly(index) {
+    // Fetch the question from the NineTen group based on the index
     const group = questionGroups[currentGroupKey];
-    if (group && index < group.length) {
-        const questionData = group[index];
-        // Proceed to display the selected question
-        // The code here would be similar to the question display logic in `displayQuestion`
-        displayQuestionContent(questionData); // A hypothetical function to handle actual question display
+    const questionData = group[index];
+
+    // Check if questionData is valid
+    if (!questionData) {
+        console.error("Question data not found for the specified index:", index);
+        return;
     }
+
+    // Update UI with the question and answers
+    const questionContainer = document.getElementById('question');
+    const answersContainer = document.getElementById('answers');
+    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
+    answersContainer.innerHTML = ''; // Clear previous answers
+
+    // Create buttons for each answer and attach event listeners
+    questionData.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.textContent = answer.text;
+        button.addEventListener('click', () => {
+            // Update handleAnswer to process these answers correctly, especially for "Something else..."
+            handleAnswer(answer);
+        });
+        answersContainer.appendChild(button);
+    });
+
+    // Ensure the UI elements for the question and answers are visible
+    questionContainer.style.display = '';
+    answersContainer.style.display = '';
+
+    // Update or remove the final result display, if present
+    const resultContainer = document.getElementById('result');
+    resultContainer.innerHTML = ''; // Clear any final result message
+
+    // Adjust any additional quiz state variables as needed
 }
 
 // Adding the question counter element dynamically
