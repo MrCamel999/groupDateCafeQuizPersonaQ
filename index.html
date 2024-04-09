@@ -408,11 +408,13 @@ function displayQuestion() {
         displayFinalOutput();
         return;
     }
-    
+
     questionCount++;
     updateQuestionCounter();
-    
-    let questionData = getQuestionFromGroup(currentGroupKey);
+
+    const questionData = questionGroups[currentGroupKey];
+    // Assuming you have logic to handle when questionGroups[currentGroupKey] is an array
+    // and selecting the correct questionData from it
 
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
@@ -447,10 +449,11 @@ function getQuestionFromGroup(groupKey) {
     const group = questionGroups[groupKey];
     let questionData;
     if (Array.isArray(group)) {
-        // Here, you can add logic to select a specific question from the group array if needed
-        questionData = group[0]; // Simplified selection of the first question for demonstration
-    } else {
-        questionData = group; // Direct assignment for non-array groups
+        questionData = group.find(q => !askedQuestions.has(q.questionText));
+        if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
     }
     return questionData;
 }
