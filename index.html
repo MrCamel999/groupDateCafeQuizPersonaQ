@@ -523,21 +523,27 @@ const characterImageMap = {
     "Zen": "images/Zen.jpg",
     "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
 };
+
 function displayFinalOutput() {
-    if (!finalCharacter && questionCount < 10) {
-        // Check if we're transitioning to questions 9 or 10 instead of showing the final output
-        if (currentGroupKey.endsWith('NineTen') && questionCount === 9) {
-            // Directly display question 10, assuming question 9 was displayed but did not result in a character selection
-            const questionData = questionGroups[currentGroupKey][1]; // Index 1 is for question 10 in the NineTen group
-            displayQuestionContent(questionData);
-        } else {
-            // Adjust the group key to target the NineTen group for question 9
-            currentGroupKey = currentGroupKey.replace('NineTen', '') + 'NineTen';
-            const questionData = questionGroups[currentGroupKey][0]; // Index 0 is for question 9 in the NineTen group
-            displayQuestionContent(questionData);
-            questionCount = 9; // Ensure we're correctly tracking the number of questions asked
+    // Check if we've not yet asked 10 questions and no character has been selected
+    if (questionCount < 10 && !finalCharacter) {
+        // This means we need to show question 9 or 10 instead of the final output
+        // Determine the appropriate NineTen group based on the currentGroupKey
+        let nineTenGroupKey = currentGroupKey + 'NineTen';
+        // Ensure we're accessing the correct NineTen group
+        if (!currentGroupKey.includes('NineTen')) {
+            currentGroupKey = nineTenGroupKey;
         }
-        return; // Prevent the default final output from displaying prematurely
+        
+        // If we're showing question 9 and "Something else..." is chosen, ensure question 10 is shown next
+        if (questionCount === 9 && readyForQuestion10) {
+            displayQuestionFromGroup(nineTenGroupKey, 1); // Directly display question 10
+        } else {
+            // Otherwise, we're ready to show question 9
+            displayQuestionFromGroup(nineTenGroupKey, 0); // Directly display question 9
+            questionCount = 9; // Adjust questionCount to reflect that we're on question 9
+        }
+        return; // Prevent displaying the final output prematurely
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
@@ -567,25 +573,29 @@ function displayFinalOutput() {
     }
 }
 
-function displayQuestionContent(questionData) {
+function displayQuestionFromGroup(groupKey, questionIndex) {
+    // Fetch the specific question from the group
+    const questionData = questionGroups[groupKey][questionIndex];
+
+    // Set up the question and answers
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
-    
-    // Ensure the question and answers are visible
-    questionContainer.style.display = '';
-    answersContainer.style.display = '';
-    
-    // Set the question text
+
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
     answersContainer.innerHTML = ''; // Clear previous answers
-    
-    // Create buttons for each answer
+
+    // Create buttons for each answer and attach the click event
     questionData.answers.forEach(answer => {
         const button = document.createElement('button');
         button.textContent = answer.text;
-        button.onclick = () => handleAnswer(answer);
+        button.addEventListener('click', () => {
+            handleAnswer(answer);
+        });
         answersContainer.appendChild(button);
     });
+
+    // Make sure to update the question count and displayed state as needed
+    questionCount++;
 }
 
 // Adding the question counter element dynamically
