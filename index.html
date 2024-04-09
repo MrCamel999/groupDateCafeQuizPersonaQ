@@ -587,6 +587,24 @@ function displayFinalOutput() {
         return;
     }
 
+    if (!finalCharacter && questionCount == 9) {
+        let questionText10 = '';
+        let answers10 = [];
+        // Assuming 'groupXNineTen' is correctly set when moving to Question 10
+        if (currentGroupKey.endsWith('NineTen')) {
+            if (currentGroupKey.startsWith('group1NineTen')) {
+                questionText10 = "What kind of girl makes your heart skip a beat?";
+                answers10 = [
+                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                    { text: "A healthy appetite", person: "Rei" },
+                ];
+            } // Replicate for 'group2NineTen', 'group3NineTen', and 'group4NineTen'
+            displayQuestionContent(questionText10, answers10); // Use the same display logic as for Question 9
+            questionCount = 10; // Correctly increment questionCount
+        }
+    }
+
     // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
     questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
