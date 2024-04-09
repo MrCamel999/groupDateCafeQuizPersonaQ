@@ -526,21 +526,23 @@ const characterImageMap = {
 
 function displayFinalOutput() {
     if (!finalCharacter && questionCount < 10) {
-        // Adjust the currentGroupKey to point to the NineTen group if not already
+        // Determine if we should be displaying question 9 or 10
+        // Adjust the group key to ensure it ends with 'NineTen' for accessing questions 9 and 10
         if (!currentGroupKey.endsWith('NineTen')) {
-            currentGroupKey += 'NineTen';
-            askedQuestions.clear(); // Reset asked questions for the NineTen group
+            currentGroupKey = currentGroupKey + 'NineTen';
         }
-
-        if (questionCount === 8) {
-            // If we're about to show question 9 but it's repeating as question 8, increment questionCount first
-            questionCount++; // This adjustment ensures we fetch question 9 correctly
+        
+        // Fetch and display question 9 or 10 directly, bypassing the repeat issue
+        let nextQuestionIndex = questionCount - 8; // This will be 1 for question 9, and potentially 2 for question 10 if incremented correctly
+        const groupQuestions = questionGroups[currentGroupKey];
+        
+        // Ensure the index is within bounds for the NineTen group
+        if (nextQuestionIndex < groupQuestions.length) {
+            const questionData = groupQuestions[nextQuestionIndex - 1]; // Fetch the appropriate question directly
+            displayQuestionContent(questionData);
+            questionCount = 9 + nextQuestionIndex - 1; // Correctly update questionCount to reflect the displayed question
+            return;
         }
-
-        // Now, fetch and display the correct question based on the updated questionCount
-        const questionData = questionGroups[currentGroupKey][questionCount - 9]; // Adjust based on actual indexing in the NineTen group
-        displayQuestionContent(questionData);
-        return; // Prevent the final output from displaying
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
