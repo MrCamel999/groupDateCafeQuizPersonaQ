@@ -402,6 +402,8 @@ let finalCharacter = '';
 let questionCount = 0;
 let currentQuestionNumberWithinGroup = 0;
 let somethingElseSelected = false;
+let showQuestion9 = false; // Indicates when to explicitly show question 9
+let showQuestion10 = false; // Indicates when to move to question 10
 const totalQuestions = 10;
 
 function displayQuestion() {
@@ -419,20 +421,17 @@ function displayQuestion() {
         questionData = getQuestionFromGroup('randomQuestions');
     } else {
         const group = questionGroups[currentGroupKey];
-        
-        // Specifically check for "Something else..." selection to move to Question 10
-        if (somethingElseSelected) {
-            questionData = group[group.length - 1]; // Directly access Question 10 if "Something else..." was selected
-        } else if (currentQuestionNumberWithinGroup === 9) {
-            questionData = group.find(q => q.answers.some(a => a.text === "Something else..."));
+
+        if (showQuestion10) {
+            // Directly access Question 10
+            questionData = group[group.length - 1];
+            showQuestion9 = false; // Reset flag
+        } else if (showQuestion9) {
+            // Directly access Question 9
+            questionData = group[group.length - 2];
+            showQuestion9 = false; // Ensure we don't repeat Question 9
         } else {
             questionData = getQuestionFromGroup(currentGroupKey);
-            if (!questionData) {
-                // If there's no more questions in the current group and "Something else..." wasn't selected,
-                // it implies all questions were asked without a final character being chosen.
-                somethingElseSelected = false; // Ensure this is reset if we're moving to random questions next
-                questionData = group[group.length - 2]; // Fallback to Question #9 if not yet shown
-            }
         }
     }
 
@@ -456,18 +455,23 @@ function displayQuestion() {
 }
 
 function handleAnswer(answer) {
+    // Check if "Something else..." is selected
     if (answer.text === "Something else...") {
-        somethingElseSelected = true; // Mark that "Something else..." was selected
-        currentQuestionNumberWithinGroup++; // Ensure we move past Question #9
-    } else if (answer.group) {
-        currentGroupKey = answer.group;
-        currentQuestionNumberWithinGroup = 0; // Reset when changing groups
-        somethingElseSelected = false; // Reset this flag when changing groups or selecting an answer
-    } else if (answer.person) {
-        finalCharacter = answer.person;
-        currentGroupKey = 'randomQuestions'; // Move to random questions after determining finalCharacter
-        currentQuestionNumberWithinGroup = 0; // Reset this as well
-        somethingElseSelected = false; // Reset since we've made a selection
+        showQuestion10 = true; // Prepare to show question 10
+    } else {
+        // Process answer normally
+        if (answer.group) {
+            currentGroupKey = answer.group;
+        } else if (answer.person) {
+            finalCharacter = answer.person;
+            currentGroupKey = 'randomQuestions';
+        }
+
+        // Increment question count and control for showing question 9
+        currentQuestionNumberWithinGroup++;
+        if (currentQuestionNumberWithinGroup > 6 && !finalCharacter && !showQuestion10) {
+            showQuestion9 = true; // After first 6 questions without a character, prepare to show question 9
+        }
     }
 
     displayQuestion();
