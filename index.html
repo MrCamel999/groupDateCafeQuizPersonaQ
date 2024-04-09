@@ -538,6 +538,21 @@ function displayFinalOutput() {
             
             // Display Question 9
             questionCount = 9; // Manually set questionCount to 9
+            
+            // Check if "Something else..." was chosen by seeing if finalCharacter is still null
+            if (!finalCharacter) {
+                // Assuming this check is immediately after Question 9's answer handling
+                // Directly specify what to display for Question 10
+                questionText = "What kind of girl makes your heart skip a beat?";
+                answers = [
+                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                    { text: "A healthy appetite", person: "Rei" },
+                ];
+
+                // Display Question 10
+                questionCount = 10; // Ensure questionCount is incremented to 10
+            }
         }
         // Add similar blocks for group2, group3, group4 with their specific Questions 9 and 10 content
     }
