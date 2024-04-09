@@ -452,48 +452,6 @@ function displayQuestion() {
     });
 }
 
-function displayQuestionDirectly(index) {
-    // Assume currentGroupKey has been set to something like "group1NineTen"
-    const group = questionGroups[currentGroupKey];
-    if (!group || index >= group.length) {
-        console.error("Invalid group or index for displaying question directly.");
-        return;
-    }
-
-    const questionData = group[index];
-    const questionContainer = document.getElementById('question');
-    const answersContainer = document.getElementById('answers');
-    const resultContainer = document.getElementById('result');
-
-    // Clear previous content
-    questionContainer.style.display = '';
-    answersContainer.innerHTML = '';
-    resultContainer.innerHTML = '';
-
-    // Update the UI with the question
-    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
-
-    // Generate answer buttons
-    questionData.answers.forEach(answer => {
-        const button = document.createElement('button');
-        button.textContent = answer.text;
-        button.addEventListener('click', () => {
-            // Adjust based on whether "Something else..." was chosen or a character was selected
-            if (answer.text === "Something else..." && index === 0) { // For question 9
-                // Logic to display question 10 directly
-                displayQuestionDirectly(1); // Assuming the next question is question 10
-            } else {
-                // Handle answer normally
-                handleAnswer(answer);
-            }
-        });
-        answersContainer.appendChild(button);
-    });
-
-    // Adjust the question count and any other necessary state variables
-    questionCount++; // Make sure this aligns with how you're tracking the progression of the quiz
-}
-
 function handleAnswer(answer) {
     if (answer.group) {
         currentGroupKey = answer.group;
@@ -565,38 +523,21 @@ const characterImageMap = {
     "Zen": "images/Zen.jpg",
     "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
 };
-
 function displayFinalOutput() {
-    // Intercept the premature final output if we're at question 8 without a character selected
-    if (!finalCharacter && questionCount === 8) {
-        // Check if we should switch to the NineTen group for questions 9 and 10
-        if (!currentGroupKey.endsWith('NineTen')) {
-            currentGroupKey += 'NineTen'; // Adjust the group key to target the NineTen group
-            askedQuestions.clear(); // Reset asked questions for this new subgroup
-            displayQuestion(); // Display question 9 from the NineTen group
-            return; // Exit to prevent showing the final result prematurely
-        } else {
-            // If we are already in a NineTen group and question 9 was displayed without selecting "Something else...",
-            // this means we should proceed to show question 10 or conclude based on the final character being chosen.
-            if (readyForQuestion10) {
-                // Display question 10 specifically
-                displayQuestionDirectly(1); // Assuming question 10 is at index 1 in the NineTen group array
-                return;
-            }
-        }
-    }
-
-    // Proceed to show the final results if none of the above conditions are met
+    // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
     questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
 
+    // Hide the question and answers from the display
     document.getElementById('question').style.display = 'none';
     document.getElementById('answers').style.display = 'none';
 
+    // Display the final result in the result container
     const resultContainer = document.getElementById('result');
     const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
     resultContainer.innerHTML = `<h2>${resultText}</h2>`;
 
+    // Display the image for the final character, if one is determined
     if (finalCharacter) {
         const imagePath = characterImageMap[finalCharacter];
         if (imagePath) {
