@@ -359,19 +359,23 @@ const questionGroups = {
 };
 
 let currentQuestionNumber = 1;
-let currentGroup = null;
+let currentGroup = 'starter';
 let askedQuestions = new Set();
 let finalOutput = null;
 
-function displayQuestion() {
-    const questionData = currentGroup ? questionGroups[currentGroup][askedQuestions.size] : questionGroups.starter;
+function displayQuestion(questionData) {
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
 
     questionContainer.innerHTML = `<h2>Question ${currentQuestionNumber}</h2><p>${questionData.questionText}</p>`;
-    answersContainer.innerHTML = questionData.answers.map((answer, index) => {
-        return `<button onclick='handleAnswer(${JSON.stringify(answer)})'>${answer.text}</button>`;
-    }).join('');
+    answersContainer.innerHTML = '';
+
+    questionData.answers.forEach((answer, index) => {
+        const button = document.createElement('button');
+        button.textContent = answer.text;
+        button.addEventListener('click', () => handleAnswer(answer));
+        answersContainer.appendChild(button);
+    });
 }
 
 function handleAnswer(answer) {
@@ -408,14 +412,30 @@ function handleAnswer(answer) {
 }
 
 function displayNextGroupQuestion() {
-    let nextQuestionIndex;
-    do {
-        nextQuestionIndex = Math.floor(Math.random() * questionGroups[currentGroup].length);
-    } while (askedQuestions.has(nextQuestionIndex));
-    
-    askedQuestions.add(nextQuestionIndex);
-    currentQuestionNumber++;
-    displayQuestion(questionGroups[currentGroup][nextQuestionIndex]);
+    const questions = questionGroups[currentGroup];
+    let nextQuestion;
+
+    // Ensure we shuffle and display questions correctly, avoiding repeats
+    if (!askedQuestions.has(currentGroup)) {
+        askedQuestions.add(currentGroup);
+        shuffleQuestions(questions);
+    }
+
+    nextQuestion = questions.find(q => !q.asked);
+    if (nextQuestion) {
+        nextQuestion.asked = true;
+        currentQuestionNumber++;
+        displayQuestion(nextQuestion);
+    } else {
+        // Handle case where all questions in a group have been asked
+    }
+}
+
+function shuffleQuestions(questions) {
+    for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
 }
 
 function displayRandomQuestion() {
@@ -450,6 +470,7 @@ function displayFinalOutput() {
     // Reset quiz or navigate to a different page
 }
 
+// Start the quiz
 displayQuestion();
 </script>
 
