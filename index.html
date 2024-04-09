@@ -455,21 +455,9 @@ function displayQuestion() {
 function handleAnswer(answer) {
     if (answer.group) {
         currentGroupKey = answer.group;
-        askedQuestions.clear(); // Reset when changing groups
     } else if (answer.person) {
         finalCharacter = answer.person;
-        currentGroupKey = 'randomQuestions'; // Move to random questions
-    } else if (answer.text === "Something else...") {
-        // This condition assumes "Something else..." is only an option in question 9
-        // Directly move to question 10 within the NineTen group
-        askedQuestions.clear(); // Ensure question 10 is selected next
-    }
-
-    // Check if it's time to transition to the NineTen group
-    if (!finalCharacter && currentGroupKey !== 'starter' && currentGroupKey !== 'randomQuestions' && askedQuestions.size === 6) {
-        // Transition to the NineTen group for questions 9 and 10 after the first 6 questions
-        currentGroupKey += "NineTen";
-        askedQuestions.clear(); // Prepare to ask questions 9 and 10
+        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
     }
 
     displayQuestion();
@@ -486,23 +474,20 @@ function getQuestionFromGroup(groupKey) {
     let group = questionGroups[groupKey];
     let questionData;
 
-    // Check if the group is one of the main groups and not yet shuffled
-    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions' && !askedQuestions.size) {
-        // Shuffle only the first 6 questions in the group for randomness
-        let questionsToShuffle = group.slice(0, 6);
-        shuffleArray(questionsToShuffle);
-        // Combine the shuffled questions with the rest of the group (which includes Q9 and Q10)
-        questionGroups[groupKey] = questionsToShuffle.concat(group.slice(6));
+    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
+    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
+        shuffleArray(group);
     }
 
     if (Array.isArray(group)) {
-        // Find the first question in the group that hasn't been asked yet
+        // Find the first question that hasn't been asked yet
         questionData = group.find(q => !askedQuestions.has(q.questionText));
 
         // If a question is found, mark it as asked
-        if (questionData) {
-            askedQuestions.add(questionData.questionText);
-        }
+        if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
     }
 
     return questionData;
