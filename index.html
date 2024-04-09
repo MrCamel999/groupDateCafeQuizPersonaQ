@@ -600,8 +600,23 @@ function displayFinalOutput() {
                     { text: "A healthy appetite", person: "Rei" },
                 ];
             } // Replicate for 'group2NineTen', 'group3NineTen', and 'group4NineTen'
-            displayQuestionContent(questionText10, answers10); // Use the same display logic as for Question 9
-            questionCount = 10; // Correctly increment questionCount
+            if (questionText && answers.length > 0) {
+                const questionContainer = document.getElementById('question');
+                const answersContainer = document.getElementById('answers');
+                
+                questionContainer.innerHTML = `<h2>${questionText}</h2>`;
+                answersContainer.innerHTML = ''; // Clear previous answers
+                
+                // Populate the answers
+                answers.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.textContent = answer.text;
+                    button.addEventListener('click', () => handleAnswer(answer));
+                    answersContainer.appendChild(button);
+                });
+
+                questionCount = 10; // Correctly increment questionCount
+            }
         }
     }
 
