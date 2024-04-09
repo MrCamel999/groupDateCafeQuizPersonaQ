@@ -525,25 +525,44 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    if (!finalCharacter && questionCount <= 9) { // Check if we're at or before question 9
-        // Prevent premature final result display by directly showing question 9 or 10
-        const isNineTenGroup = currentGroupKey.includes('NineTen');
-        const targetGroupKey = isNineTenGroup ? currentGroupKey : currentGroupKey + 'NineTen';
-
-        if (!isNineTenGroup) {
-            // Transitioning to question 9 for the first time
-            questionCount = 9; // Ensure we're aligned to display question 9
-        } else if (questionCount === 9) {
-            // Adjust for when "Something else..." should lead to question 10
-            questionCount++; // Align to display question 10
+    if (!finalCharacter && questionCount < 10) {
+        // Directly specify what to display for question 9 based on currentGroupKey
+        let questionText = '';
+        let answers = [];
+        
+        // Example for group1, replicate for other groups with their specific question 9 content
+        if (currentGroupKey.startsWith('group1')) {
+            questionText = "What you look for in a woman is...";
+            answers = [
+                { text: "A keen-eyed, shy Japanese girl", person: "Yukiko Amagi" },
+                { text: "A sensitive, literary sort", person: "Marie" },
+                { text: "Someone mysterious in a sleek car", person: "Margaret" },
+                { text: "Something else...", person: null }
+            ];
         }
+        // Add similar if-else blocks for other groups (group2, group3, group4) with their respective question 9 content
 
-        const questionIndex = questionCount === 10 ? 1 : 0; // Choose question 9 or 10 based on updated count
-        const questionData = questionGroups[targetGroupKey][questionIndex];
+        // If question 9 was specifically set for this group, display it
+        if (questionText && answers.length > 0) {
+            const questionContainer = document.getElementById('question');
+            const answersContainer = document.getElementById('answers');
+            
+            questionContainer.innerHTML = `<h2>${questionText}</h2>`;
+            answersContainer.innerHTML = ''; // Clear previous answers
+            
+            // Populate the answers
+            answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer.text;
+                button.addEventListener('click', () => handleAnswer(answer));
+                answersContainer.appendChild(button);
+            });
 
-        // Display the chosen question
-        displayQuestionContent(questionData);
-        return; // Skip the standard final output display logic
+            // Ensure questionCount reflects showing question 9
+            questionCount = 9;
+            
+            return; // Skip the rest of the final output logic
+        }
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
