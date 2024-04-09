@@ -412,29 +412,37 @@ function displayQuestion() {
     questionCount++;
     updateQuestionCounter();
 
-    let questionData = questionGroups[currentGroupKey];
-    if (Array.isArray(questionData)) {
-        questionData = questionData.find(q => !askedQuestions.has(q.questionText));
-        if (questionData) askedQuestions.add(questionData.questionText);
-    }
+    const questionData = questionGroups[currentGroupKey];
+    // Assuming you have logic to handle when questionGroups[currentGroupKey] is an array
+    // and selecting the correct questionData from it
 
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
-    answersContainer.innerHTML = ''; // Clear previous answers
-
-    // Dynamically create buttons and add event listeners
-    questionData.answers.forEach((answer, index) => {
-        const button = document.createElement('button');
-        button.textContent = answer.text;
-        button.addEventListener('click', () => handleAnswer(index));
-        answersContainer.appendChild(button);
-    });
+    answersContainer.innerHTML = questionData.answers.map((answer, index) => {
+        return `<button onclick="handleAnswer(${index})">${answer.text}</button>`;
+    }).join('');
 }
 
 function handleAnswer(answerIndex) {
-    console.log("handleAnswer called with index:", answerIndex);
-    // For now, just log the index to verify that clicking works as intended
+    // Assuming currentGroupKey correctly points to a group with an array of questions
+    const answers = questionGroups[currentGroupKey].answers;
+    const selectedAnswer = answers[answerIndex];
+
+    if (selectedAnswer.group) {
+        currentGroupKey = selectedAnswer.group;
+        // Reset askedQuestions if you are tracking which questions have been asked
+        askedQuestions.clear();
+        displayQuestion();
+    } else if (selectedAnswer.person !== undefined) {
+        finalCharacter = selectedAnswer.person;
+        // Optionally, continue to random questions or display final character
+        displayQuestion();
+    } else {
+        // If the answer does not lead to another question or a final character,
+        // this can be used to handle the logic accordingly.
+        console.log("Answer does not lead to a group or a character.");
+    }
 }
 
 function getQuestionFromGroup(groupKey) {
