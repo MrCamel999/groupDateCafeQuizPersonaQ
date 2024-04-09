@@ -408,40 +408,40 @@ function displayQuestion() {
         displayFinalOutput();
         return;
     }
-
+    
     questionCount++;
     updateQuestionCounter();
 
-    const questionData = questionGroups[currentGroupKey];
-    // Assuming you have logic to handle when questionGroups[currentGroupKey] is an array
-    // and selecting the correct questionData from it
+    let questionData = questionGroups[currentGroupKey];
+    // Adjusting for when questionGroups returns an array for groups like group2A, group2B, etc.
+    if (Array.isArray(questionData)) {
+        questionData = questionData[0]; // Assuming we want the first question of the group
+    }
 
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
     answersContainer.innerHTML = questionData.answers.map((answer, index) => {
+        // Passing index of the answer to handleAnswer function
         return `<button onclick="handleAnswer(${index})">${answer.text}</button>`;
     }).join('');
 }
 
 function handleAnswer(answerIndex) {
-    // Assuming currentGroupKey correctly points to a group with an array of questions
-    const answers = questionGroups[currentGroupKey].answers;
-    const selectedAnswer = answers[answerIndex];
-
-    if (selectedAnswer.group) {
-        currentGroupKey = selectedAnswer.group;
-        // Reset askedQuestions if you are tracking which questions have been asked
-        askedQuestions.clear();
+    const questionData = questionGroups[currentGroupKey];
+    const answer = questionData.answers[answerIndex];
+    
+    if (answer.group) {
+        currentGroupKey = answer.group;
+        askedQuestions.clear(); // Useful if you're tracking which questions have been asked
         displayQuestion();
-    } else if (selectedAnswer.person !== undefined) {
-        finalCharacter = selectedAnswer.person;
-        // Optionally, continue to random questions or display final character
+    } else if (answer.person) {
+        finalCharacter = answer.person;
+        // Logic to continue asking questions until reaching the total, if necessary
         displayQuestion();
     } else {
-        // If the answer does not lead to another question or a final character,
-        // this can be used to handle the logic accordingly.
-        console.log("Answer does not lead to a group or a character.");
+        // Handle other cases or just move to the next question
+        displayQuestion();
     }
 }
 
