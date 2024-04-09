@@ -450,16 +450,33 @@ function handleAnswer(answer) {
     displayQuestion();
 }
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+    }
+}
+
 function getQuestionFromGroup(groupKey) {
-    const group = questionGroups[groupKey];
+    let group = questionGroups[groupKey];
     let questionData;
+
+    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
+    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
+        shuffleArray(group);
+    }
+
     if (Array.isArray(group)) {
+        // Find the first question that hasn't been asked yet
         questionData = group.find(q => !askedQuestions.has(q.questionText));
+
+        // If a question is found, mark it as asked
         if (questionData) askedQuestions.add(questionData.questionText);
     } else if (!askedQuestions.has(group.questionText)) {
         questionData = group;
         askedQuestions.add(group.questionText);
     }
+
     return questionData;
 }
 
