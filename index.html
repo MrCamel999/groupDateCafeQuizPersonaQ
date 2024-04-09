@@ -485,8 +485,17 @@ function updateQuestionCounter() {
 }
 
 function displayFinalOutput() {
+    // Update the question counter to show "Final Result" surrounded by heart emojis
+    const questionCounter = document.getElementById('question-counter');
+    questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
+
+    // Hide the question and answers from the display
+    document.getElementById('question').style.display = 'none';
+    document.getElementById('answers').style.display = 'none';
+
+    // Display the final result in the result container
     const resultContainer = document.getElementById('result');
-    const resultText = finalCharacter ? `Your result is: ${finalCharacter}` : "No final character determined.";
+    const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
     resultContainer.innerHTML = `<h2>${resultText}</h2>`;
 }
 
