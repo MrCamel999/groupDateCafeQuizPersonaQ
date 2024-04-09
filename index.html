@@ -4,81 +4,92 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Group Date Cafe Quiz</title>
-<style>
-  /* Basic styling; update as needed */
-  body {
-    font-family: Arial, sans-serif;
-  }
-  #quiz-container {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
-  .question {
-    margin-bottom: 10px;
-  }
-  .answers button {
-    margin-right: 10px;
-    padding: 5px 10px;
-  }
-</style>
 </head>
 <body>
-  <div id="quiz-container">
-    <!-- Question content will be added here -->
-  </div>
+
+<div id="quiz-container">
+    <div id="question"></div>
+    <div id="answers"></div>
+    <div id="result"></div>
+</div>
 
 <script>
-// Placeholder for the actual questions and answers
-const starterQuestions = {
-  1: {
-    questionText: "Does a difference in age or sex not matter as long as there is love?",
-    answers: [
-      { text: "Their sex matters (go to 2A)", goTo: 2 },
-      { text: "It doesn't matter at all! (go to 2B)", goTo: 3 }
+const questionGroups = {
+    starter: {
+        questionText: "Does a difference in age or sex not matter as long as there is love?",
+        answers: [
+            { text: "Their sex matters (go to 2A)", group: "group2A" },
+            { text: "It doesn't matter at all! (go to 2B)", group: "group2B" }
+        ]
+    },
+    group2A: {
+        // Questions for Group 2A go here
+    },
+    group2B: {
+        // Questions for Group 2B go here
+    },
+    group1: [
+        // Sample Group 1 Questions
+        {
+            questionText: "What kind of club would you be interested in joining?",
+            answers: [
+                { text: "The Gardening Club", person: "Fuuka" },
+                { text: "The Diving Club", person: null },
+                { text: "The Technology Club", person: null },
+            ]
+        },
+        // More questions go here...
+    ],
+    // More groups go here...
+    randomQuestions: [
+        // Random questions go here...
     ]
-  },
-  // Add more starter questions and groups as needed
-};
-
-const groups = {
-  // Placeholder for groups; fill with your actual data
 };
 
 let currentQuestionNumber = 1;
-let chosenGroup = null;
-let answeredQuestions = [];
-let finalOutputDetermined = false;
+let currentGroup = null;
+let askedQuestions = new Set();
+let finalOutput = null;
 
-function displayQuestion(questionNumber) {
-  const question = starterQuestions[questionNumber];
-  const quizContainer = document.getElementById('quiz-container');
-  quizContainer.innerHTML = `<div class='question'>
-                               <h2>Question ${currentQuestionNumber}</h2>
-                               <p>${question.questionText}</p>
-                             </div>
-                             <div class='answers'>
-                               ${question.answers.map((answer, index) => 
-                                 `<button onclick='handleAnswer(${index}, ${question.answers[index].goTo})'>${answer.text}</button>`
-                               ).join('')}
-                             </div>`;
+function displayQuestion() {
+    const questionData = currentGroup ? questionGroups[currentGroup][askedQuestions.size] : questionGroups.starter;
+    const questionContainer = document.getElementById('question');
+    const answersContainer = document.getElementById('answers');
+
+    questionContainer.innerHTML = `<h2>Question ${currentQuestionNumber}</h2><p>${questionData.questionText}</p>`;
+    answersContainer.innerHTML = questionData.answers.map((answer, index) => {
+        return `<button onclick='handleAnswer(${JSON.stringify(answer)})'>${answer.text}</button>`;
+    }).join('');
 }
 
-function handleAnswer(answerIndex, nextQuestionNumber) {
-  // This is where you'll add the logic for branching and randomizing questions
-  if (nextQuestionNumber === 2) {
-    // Logic to choose Group 1 or 3
-  } else if (nextQuestionNumber === 3) {
-    // Logic to choose Group 2 or 4
-  }
-  // Update the current question number and display the next question
-  currentQuestionNumber++;
-  displayQuestion(nextQuestionNumber);
+function handleAnswer(answer) {
+    if (answer.group) {
+        currentGroup = answer.group;
+        displayQuestion();
+    } else {
+        if (answer.person) {
+            finalOutput = answer.person;
+            displayFinalOutput();
+            return;
+        }
+        if (currentGroup && askedQuestions.size < questionGroups[currentGroup].length - 1) {
+            askedQuestions.add(currentQuestionNumber);
+            currentQuestionNumber++;
+            displayQuestion();
+        } else {
+            // Handle random questions logic here
+        }
+    }
 }
 
-// Initial call to display the first question
-displayQuestion(currentQuestionNumber);
+function displayFinalOutput() {
+    const resultContainer = document.getElementById('result');
+    resultContainer.innerHTML = finalOutput ? `Your result is: ${finalOutput}` : "No result found.";
+    // Reset quiz or navigate to a different page
+}
 
+displayQuestion();
 </script>
+
 </body>
 </html>
