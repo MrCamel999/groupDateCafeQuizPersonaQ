@@ -18,10 +18,11 @@ const questionGroups = {
     starter: {
         questionText: "Does a difference in age or sex not matter as long as there is love?",
         answers: [
-            { text: "Their sex matters (go to 2A)", group: "group2A" },
-            { text: "It doesn't matter at all! (go to 2B)", group: "group2B" }
+            { text: "Their sex matters", group: "group2A" },
+            { text: "It doesn't matter at all!", group: "group2B" }
         ]
     },
+
     group2A: [
         {
             questionText: "What's your idea of a good time together?",
@@ -31,6 +32,7 @@ const questionGroups = {
             ]
         }
     ],
+
     group2B: [
         {
             questionText: "How do you want the person you like to act towards you?",
@@ -40,19 +42,278 @@ const questionGroups = {
             ]
         }
     ],
+
     group1: [
-        // Sample Group 1 Questions
         {
             questionText: "What kind of club would you be interested in joining?",
             answers: [
-                { text: "The Gardening Club", person: "Fuuka" },
+                { text: "The Gardening Club", person: null },
                 { text: "The Diving Club", person: null },
-                { text: "The Technology Club", person: null },
+                { text: "The Technology Club", person: "Fuuka Yamagishi" }
             ]
         },
-        // More questions go here...
+        {
+            questionText: "What kind of older lady do you like?",
+            answers: [
+                { text: "One talented at lame jokes", person: "Margaret" },
+                { text: "One good at looking after others", person: null },
+                { text: "One who's actually an older man", person: null }
+            ]
+        },
+        {
+            questionText: "That girl you're curious about dropped something. What was it?",
+            answers: [
+                { text: "A floral-pattern handkerchief", person: null },
+                { text: "A lacy parasol", person: null },
+                { text: "Some handwritten poetry", person: "Marie" }
+            ]
+        },
+        {
+            questionText: "What surprised you about the one you fell in love with?",
+            answers: [
+                { text: "They're a crane, not a human", person: null },
+                { text: "They're a girl, not a prince", person: "Naoto Shirogane" }
+            ]
+        },
+        {
+            questionText: "What do you live on?",
+            answers: [
+                { text: "Rice", person: null },
+                { text: "Bread", person: null },
+                { text: "Donuts", person: "Rei" }
+            ]
+        },
+        {
+            questionText: "Where would you go to soothe your weary soul?",
+            answers: [
+                { text: "A hot springs inn", person: "Yukiko Amagi" },
+                { text: "An extravagant resort", person: null },
+                { text: "A mountain cabin", person: null }
+            ]
+        },
+        {
+            questionText: "What you look for in a woman is...",
+            answers: [
+                { text: "A keen-eyed, shy Japanese girl", person: "Yukiko Amagi" },
+                { text: "A sensitive, literary sort", person: "Marie" },
+                { text: "Someone mysterious in a sleek car", person: "Margaret" },
+                { text: "Something else...", person: null }
+            ]
+        },
+        {
+            questionText: "What kind of girl makes your heart skip a beat?",
+            answers: [
+                { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                { text: "A healthy appetite", person: "Rei" },
+            ]
+        }
     ],
-    // More groups go here...
+
+    group2: [
+        {
+            questionText: "What's the number one topping for beef bowls?",
+            answers: [
+                { text: "Red pickled ginger", person: null },
+                { text: "Protein", person: "Akihiko Sanada" },
+                { text: "Green onions", person: null }
+            ]
+        },
+        {
+            questionText: "All together now:",
+            answers: [
+                { text: "\"Let's go have some fun!\"", person: null },
+                { text: "\"Even the ace detective gives up!\"", person: "Junpei Iori" }
+            ]
+        },
+        {
+            questionText: "What's the most important accompaniment for food?",
+            answers: [
+                { text: "A tall glass of milk", person: "Ken Amada" },
+                { text: "Warm green tea", person: null },
+                { text: "Mad Bull", person: null },
+                { text: "Someone to eat with", person: null }
+            ]
+        },
+        {
+            questionText: "What do you most seek comfort in?",
+            answers: [
+                { text: "Relaxing music", person: null },
+                { text: "Massages", person: null },
+                { text: "Squishy dog pads", person: "Koromaru" }
+            ]
+        },
+        {
+            questionText: "What's in your refrigerator?",
+            answers: [
+                { text: "Dinner leftovers", person: null },
+                { text: "Cold barley tea", person: null },
+                { text: "Some kind of grass", person: "Yu Narukami" }
+            ]
+        },
+        {
+            questionText: "What is the primary characteristic of a cute girl?",
+            answers: [
+                { text: "A lovely smile", person: null },
+                { text: "She wears glasses", person: null },
+                { text: "Makes bear puns", person: "Teddie" }
+            ]
+        },
+        {
+            questionText: "What you look for in a man is...",
+            answers: [
+                { text: "A great sense of humor", person: "Junpei Iori" },
+                { text: "Well-honed muscles", person: "Akihiko Sanada" },
+                { text: "Rock-solid reliability", person: "Yu Narukami" },
+                { text: "Something else...", person: null }
+            ]
+        },
+        {
+            questionText: "What kind of girl makes your heart skip a beat?",
+            answers: [
+                { text: "Youth that tries to act mature", person: "Ken Amada" },
+                { text: "A pure heart", person: "Teddie" },
+                { text: "Overwhelming adorableness", person: "Koromaru" },
+                { text: "Something else...", person: null }
+            ]
+        }
+    ],
+
+    group3: [
+        {
+            questionText: "Which would you choose?",
+            answers: [
+                { text: "The Voluptuous Abaddon", person: null },
+                { text: "A titanium-bodied beauty", person: "Aigis" }
+            ]
+        },
+        {
+            questionText: "You're feeling a bit hungry... What do you reach for?",
+            answers: [
+                { text: "A rice ball", person: null },
+                { text: "Meat gum", person: "Chie Satonaka" }
+            ]
+        },
+        {
+            questionText: "What makes her charming?",
+            answers: [
+                { text: "The way she runs up an escalator", person: "Elizabeth" },
+                { text: "The way animals eat her food scraps", person: null },
+                { text: "Her taking home my electronics", person: null }
+            ]
+        },
+        {
+            questionText: "Someone you like gave you a compliment. What did they say?",
+            answers: [
+                { text: "You're amazing!", person: null },
+                { text: "You're so cool!", person: null },
+                { text: "C'est magnifique!", person: "Mitsuru Kirijo" }
+            ]
+        },
+        {
+            questionText: "What do you like to do to liven things up?",
+            answers: [
+                { text: "Play King's Game at a club", person: "Rise Kujikawa" },
+                { text: "Singing contests at karaoke", person: null },
+                { text: "Arcade tournaments", person: null },
+                { text: "Read at a library", person: null }
+            ]
+        },
+        {
+            questionText: "If you were going to master something, it'd definitely be this!",
+            answers: [
+                { text: "Calligraphy", person: null },
+                { text: "Flower arrangement", person: null },
+                { text: "Archery", person: "Yukari Takeba" }
+            ]
+        },
+        {
+            questionText: "What you look for in a woman is...",
+            answers: [
+                { text: "Brains and beauty", person: "Mitsuru Kirijo" },
+                { text: "An invincible idol smile", person: "Rise Kujikawa" },
+                { text: "Polite and proper behaviour", person: "Elizabeth" },
+                { text: "Something else...", person: null }
+            ]
+        },
+        {
+            questionText: "What kind of girl makes your heart skip a beat?",
+            answers: [
+                { text: "Sharp-tongued, yet lonely", person: "Yukari Takeba" },
+                { text: "An energetic crybaby", person: "Chie Satonaka" },
+                { text: "Abs of literal steel", person: "Aigis" },
+            ]
+        }
+    ],
+
+    group4: [
+        {
+            questionText: "What is the best place for some alone time?",
+            answers: [
+                { text: "Relaxing at a cafe", person: null },
+                { text: "A thrilling amusement park", person: null },
+                { text: "Hands-on at a bath house", person: "Kanji Tatsumi" }
+            ]
+        },
+        {
+            questionText: "Are you starting to get tired of these questions?",
+            answers: [
+                { text: "Not really", person: null },
+                { text: "Maybe", person: null },
+                { text: "I don't care", person: "Makoto Yuki" }
+            ]
+        },
+        {
+            questionText: "What movies make you cry?",
+            answers: [
+                { text: "War films", person: null },
+                { text: "Tragic romances", person: null },
+                { text: "Incredible Pet Stories", person: "Shinjiro Aragaki" }
+            ]
+        },
+        {
+            questionText: "If you could be reborn into another family, what would your role be?",
+            answers: [
+                { text: "Older brother to sisters", person: null },
+                { text: "Younger brother of sisters", person: "Theodore" },
+                { text: "A trustworthy sister", person: null }
+            ]
+        },
+        {
+            questionText: "How would you express your feelings to the one you like?",
+            answers: [
+                { text: "Tell them in person", person: null },
+                { text: "Slug it out at a riverbed", person: "Yosuke Hanamura" },
+                { text: "Something else...", person: null }
+            ]
+        },
+        {
+            questionText: "Oh no! Your beloved is in danger!",
+            answers: [
+                { text: "Rush over at once", person: null },
+                { text: "Level your bowgun", person: "Zen" },
+                { text: "Stand back and watch", person: null }
+            ]
+        },
+        {
+            questionText: "What you look for in a man is...",
+            answers: [
+                { text: "A motherly, caring side", person: "Shinjiro Aragaki" },
+                { text: "A cool, but wild side", person: "Makoto Yuki" },
+                { text: "Skilled hands", person: "Kanji Tatsumi" },
+                { text: "Something else...", person: null }
+            ]
+        },
+        {
+            questionText: "What kind of girl makes your heart skip a beat?",
+            answers: [
+                { text: "Somewhat disappointing good looks", person: "Yosuke Hanamura" },
+                { text: "A knight who protects the weak", person: "Zen" },
+                { text: "A gentle youngest of siblings", person: "Theodore" },
+            ]
+        }
+    ],
+
     randomQuestions: [
         {
             questionText: "You've upset your beloved! How will you make it up to them?",
