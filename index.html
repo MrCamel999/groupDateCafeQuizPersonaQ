@@ -359,137 +359,82 @@ const questionGroups = {
 };
 
 
-let currentQuestionNumber = 0; // Initialize question counter
 let currentGroupKey = 'starter';
-let askedQuestions = new Set(); // Keep track of asked questions for randomness
-let finalCharacter = ''; // Final character/result
-let totalQuestions = 10; // Total questions to be asked
+let askedQuestions = new Set();
+let finalCharacter = ''; 
+let questionCount = 0;
+const totalQuestions = 10;
 
 function displayQuestion() {
-    // Increase question counter and display it
-    currentQuestionNumber++;
-    document.getElementById('question-counter').textContent = `Question ${currentQuestionNumber}/10`;
+    if (questionCount >= totalQuestions) {
+        displayFinalOutput();
+        return;
+    }
+    
+    questionCount++;
+    updateQuestionCounter();
 
-    // Check if we've reached 10 questions
-    if (currentQuestionNumber > totalQuestions) {
+    const group = questionGroups[currentGroupKey];
+    let questionData;
+    if (finalCharacter || currentGroupKey === 'randomQuestions') {
+        questionData = getQuestionFromGroup('randomQuestions');
+    } else {
+        questionData = getQuestionFromGroup(currentGroupKey);
+    }
+
+    if (!questionData) {
         displayFinalOutput();
         return;
     }
 
-    let questionData;
-    // If finalCharacter is already determined, pull from randomQuestions, otherwise, continue as before
-    if (finalCharacter && currentQuestionNumber <= totalQuestions) {
-        questionData = getRandomQuestion('randomQuestions');
-    } else {
-        const group = questionGroups[currentGroupKey];
-        questionData = Array.isArray(group) ? group.find(q => !askedQuestions.has(q.questionText)) : group;
-    }
-
-    if (!questionData) {
-        displayFinalOutput(); // No more questions or end of quiz
-        return;
-    }
-
-    // Standard procedure to display question and answers
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
-
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
-    answersContainer.innerHTML = '';
-
-    questionData.answers.forEach(answer => {
-        const button = document.createElement('button');
-        button.textContent = answer.text;
-        button.onclick = () => handleAnswer(answer);
-        answersContainer.appendChild(button);
-    });
-
-    if (Array.isArray(group)) {
-        askedQuestions.add(questionData.questionText);
-    }
+    answersContainer.innerHTML = questionData.answers.map(answer => 
+        `<button onclick="handleAnswer('${JSON.stringify(answer).replace(/"/g, '&quot;')}')">${answer.text}</button>`
+    ).join('');
 }
 
-function handleAnswer(answer) {
+function handleAnswer(answerStr) {
+    const answer = JSON.parse(answerStr.replace(/&quot;/g, '"'));
     if (answer.group) {
-        // If the answer transitions to a new group, update the group and display the first question from it
         currentGroupKey = answer.group;
-        askedQuestions.clear(); // Reset asked questions for the new group
     } else if (answer.person) {
-        finalCharacter = answer.person; // Determine final character, if applicable
+        finalCharacter = answer.person;
+        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
     }
 
     displayQuestion();
 }
 
-function getRandomQuestion(groupKey) {
+function getQuestionFromGroup(groupKey) {
     const group = questionGroups[groupKey];
-    let randomIndex, questionData;
-    do {
-        randomIndex = Math.floor(Math.random() * group.length);
-        questionData = group[randomIndex];
-    } while (askedQuestions.has(questionData.questionText)); // Ensure unique question
-
-    askedQuestions.add(questionData.questionText);
+    let questionData;
+    if (Array.isArray(group)) {
+        questionData = group.find(q => !askedQuestions.has(q.questionText));
+        if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
+    }
     return questionData;
 }
 
-function displayNextGroupQuestion() {
-    const questions = questionGroups[currentGroup];
-    let nextQuestion;
-
-    // Ensure we shuffle and display questions correctly, avoiding repeats
-    if (!askedQuestions.has(currentGroup)) {
-        askedQuestions.add(currentGroup);
-        shuffleQuestions(questions);
-    }
-
-    nextQuestion = questions.find(q => !q.asked);
-    if (nextQuestion) {
-        nextQuestion.asked = true;
-        currentQuestionNumber++;
-        displayQuestion(nextQuestion);
-    } else {
-        // Handle case where all questions in a group have been asked
-    }
-}
-
-function shuffleQuestions(questions) {
-    for (let i = questions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [questions[i], questions[j]] = [questions[j], questions[i]];
-    }
-}
-
-function displayRandomQuestion() {
-    let nextQuestionIndex;
-    do {
-        nextQuestionIndex = Math.floor(Math.random() * questionGroups.randomQuestions.length);
-    } while (askedQuestions.has(nextQuestionIndex + 100)); // Adding 100 to distinguish random questions indexes
-
-    askedQuestions.add(nextQuestionIndex + 100); // Track random questions separately
-    currentQuestionNumber++;
-    displayQuestion(questionGroups.randomQuestions[nextQuestionIndex]);
-}
-
-function displaySpecialQuestion9() {
-    // Directly access question 9 and display it
-    currentQuestionNumber++;
-    displayQuestion(questionGroups.specialQuestion9);
-}
-
-function fillRemainingQuestionsWithRandom() {
-    // If we have determined the final output before reaching question 10,
-    // we still need to fill the remaining questions with random ones.
-    while (currentQuestionNumber < 10) {
-        displayRandomQuestion();
-    }
-    displayFinalOutput();
+function updateQuestionCounter() {
+    document.getElementById('question-counter').innerText = `Question ${questionCount} of ${totalQuestions}`;
 }
 
 function displayFinalOutput() {
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = finalCharacter ? `Your result is: ${finalCharacter}` : "Quiz complete! Thanks for playing.";
+    const resultText = finalCharacter ? `Your result is: ${finalCharacter}` : "No final character determined.";
+    resultContainer.innerHTML = `<h2>${resultText}</h2>`;
 }
+
+// Adding the question counter element dynamically
+const quizContainer = document.getElementById('quiz-container');
+const counterElement = document.createElement('div');
+counterElement.id = 'question-counter';
+quizContainer.insertBefore(counterElement, quizContainer.firstChild);
 
 // Start the quiz
 displayQuestion();
