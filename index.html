@@ -525,25 +525,22 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    // Check if we've not yet asked 10 questions and no character has been selected
-    if (questionCount < 10 && !finalCharacter) {
-        // This means we need to show question 9 or 10 instead of the final output
-        // Determine the appropriate NineTen group based on the currentGroupKey
-        let nineTenGroupKey = currentGroupKey + 'NineTen';
-        // Ensure we're accessing the correct NineTen group
-        if (!currentGroupKey.includes('NineTen')) {
-            currentGroupKey = nineTenGroupKey;
+    if (!finalCharacter && questionCount < 10) {
+        // Adjust the currentGroupKey to point to the NineTen group if not already
+        if (!currentGroupKey.endsWith('NineTen')) {
+            currentGroupKey += 'NineTen';
+            askedQuestions.clear(); // Reset asked questions for the NineTen group
         }
-        
-        // If we're showing question 9 and "Something else..." is chosen, ensure question 10 is shown next
-        if (questionCount === 9 && readyForQuestion10) {
-            displayQuestionFromGroup(nineTenGroupKey, 1); // Directly display question 10
-        } else {
-            // Otherwise, we're ready to show question 9
-            displayQuestionFromGroup(nineTenGroupKey, 0); // Directly display question 9
-            questionCount = 9; // Adjust questionCount to reflect that we're on question 9
+
+        if (questionCount === 8) {
+            // If we're about to show question 9 but it's repeating as question 8, increment questionCount first
+            questionCount++; // This adjustment ensures we fetch question 9 correctly
         }
-        return; // Prevent displaying the final output prematurely
+
+        // Now, fetch and display the correct question based on the updated questionCount
+        const questionData = questionGroups[currentGroupKey][questionCount - 9]; // Adjust based on actual indexing in the NineTen group
+        displayQuestionContent(questionData);
+        return; // Prevent the final output from displaying
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
