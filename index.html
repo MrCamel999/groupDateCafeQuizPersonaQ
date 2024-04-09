@@ -413,11 +413,14 @@ function displayQuestion() {
     updateQuestionCounter();
 
     const group = questionGroups[currentGroupKey];
-    let questionData = getQuestionFromGroup(currentGroupKey);
+    let questionData;
+    if (finalCharacter || currentGroupKey === 'randomQuestions') {
+        questionData = getQuestionFromGroup('randomQuestions');
+    } else {
+        questionData = getQuestionFromGroup(currentGroupKey);
+    }
 
     if (!questionData) {
-        // This checks for when a group might be exhausted or incorrectly set
-        // and defaults to showing the final output if no valid question can be displayed
         displayFinalOutput();
         return;
     }
@@ -425,32 +428,21 @@ function displayQuestion() {
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
-    answersContainer.innerHTML = questionData.answers.map(answer => {
-        const answerStr = encodeURIComponent(JSON.stringify(answer));
-        return `<button onclick="handleAnswer('${answerStr}')">${answer.text}</button>`;
-    }).join('');
+    answersContainer.innerHTML = questionData.answers.map(answer => 
+        `<button onclick="handleAnswer('${JSON.stringify(answer).replace(/"/g, '&quot;')}')">${answer.text}</button>`
+    ).join('');
 }
 
 function handleAnswer(answerStr) {
-    // Parsing the stringified answer back into an object safely
-    try {
-        const answer = JSON.parse(decodeURIComponent(answerStr));
-        if (answer.group) {
-            currentGroupKey = answer.group;
-            askedQuestions.clear(); // Reset asked questions for the new group
-            displayQuestion();
-        } else if (answer.person !== undefined) { // check for person property
-            // If a specific person was selected, determine final output
-            finalCharacter = answer.person;
-            displayQuestion();
-        } else {
-            // If no person was selected and no group to transition to,
-            // this is a random question, just go to next
-            displayQuestion();
-        }
-    } catch(e) {
-        console.error("Error parsing answer data:", e);
+    const answer = JSON.parse(answerStr.replace(/&quot;/g, '"'));
+    if (answer.group) {
+        currentGroupKey = answer.group;
+    } else if (answer.person) {
+        finalCharacter = answer.person;
+        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
     }
+
+    displayQuestion();
 }
 
 function getQuestionFromGroup(groupKey) {
