@@ -526,38 +526,37 @@ const characterImageMap = {
 
 function displayFinalOutput() {
     if (!finalCharacter && questionCount < 10) {
-        // Directly specify what to display for Question 9 based on currentGroupKey
+        // Directly specify what to display for question 9 based on currentGroupKey
+        let questionText = '';
+        let answers = [];
+        
+        // Example for group1, replicate for other groups with their specific question 9 content
         if (currentGroupKey.startsWith('group1')) {
-            let questionText = "What you look for in a woman is...";
-            let answers = [
+            questionText = "What you look for in a woman is...";
+            answers = [
                 { text: "A keen-eyed, shy Japanese girl", person: "Yukiko Amagi" },
                 { text: "A sensitive, literary sort", person: "Marie" },
                 { text: "Someone mysterious in a sleek car", person: "Margaret" },
                 { text: "Something else...", person: null }
             ];
-            
-            // Display Question 9
-            displayQuestionContent(questionText, answers);
-            questionCount = 9; // Manually set questionCount to 9
-            
-            // Check if "Something else..." was chosen by seeing if finalCharacter is still null
+            questionCount = 9;
             if (!finalCharacter) {
-                // Assuming this check is immediately after Question 9's answer handling
-                // Directly specify what to display for Question 10
-                questionText = "What kind of girl makes your heart skip a beat?";
-                answers = [
-                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
-                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
-                    { text: "A healthy appetite", person: "Rei" },
-                ];
+                let questionText10 = '';
+                let answers10 = [];
 
-                // Display Question 10
-                displayQuestionContent(questionText, answers);
-                questionCount = 10; // Ensure questionCount is incremented to 10
+                if (currentGroupKey.startsWith('group1')) {
+                    questionText10 = "What kind of girl makes your heart skip a beat?";
+                    answers10 = [
+                        { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                        { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                        { text: "A healthy appetite", person: "Rei" },
+                    ];
+                }
+                // Replicate the structure above for other groups with their specific question 10 content
+
+                questionCount = 10;
             }
         }
-        // Add similar blocks for group2, group3, group4 with their specific Questions 9 and 10 content
-    }
 
         // Add similar if-else blocks for other groups (group2, group3, group4) with their respective question 9 content
 
