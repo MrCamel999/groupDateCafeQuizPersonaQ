@@ -525,20 +525,25 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    // Only attempt to redirect to Question 9 if the final character has not been determined
-    // and the question count indicates we're prematurely trying to show the final output.
-    if (!finalCharacter && questionCount === 8) {
-        // Ensure we're targeting the correct NineTen group for Question 9 and 10.
-        const intendedGroupKey = currentGroupKey + 'NineTen';
-        // Verify the intended group exists and has the expected questions.
-        if (questionGroups[intendedGroupKey] && questionGroups[intendedGroupKey].length > 1) {
-            currentGroupKey = intendedGroupKey; // Update the group key to the NineTen group.
-            // Directly fetch and display Question 9 from the NineTen group.
-            const question9Data = questionGroups[currentGroupKey][0]; // Assuming the first question is Question 9.
-            displayQuestionContent(question9Data);
-            questionCount = 9; // Correctly update the questionCount to reflect Question 9 being displayed.
-            return; // Prevent the final result from being displayed prematurely.
+    if (!finalCharacter && questionCount <= 9) { // Check if we're at or before question 9
+        // Prevent premature final result display by directly showing question 9 or 10
+        const isNineTenGroup = currentGroupKey.includes('NineTen');
+        const targetGroupKey = isNineTenGroup ? currentGroupKey : currentGroupKey + 'NineTen';
+
+        if (!isNineTenGroup) {
+            // Transitioning to question 9 for the first time
+            questionCount = 9; // Ensure we're aligned to display question 9
+        } else if (questionCount === 9) {
+            // Adjust for when "Something else..." should lead to question 10
+            questionCount++; // Align to display question 10
         }
+
+        const questionIndex = questionCount === 10 ? 1 : 0; // Choose question 9 or 10 based on updated count
+        const questionData = questionGroups[targetGroupKey][questionIndex];
+
+        // Display the chosen question
+        displayQuestionContent(questionData);
+        return; // Skip the standard final output display logic
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
