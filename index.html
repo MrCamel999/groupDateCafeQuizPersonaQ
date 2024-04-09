@@ -64,22 +64,72 @@ function displayQuestion() {
 
 function handleAnswer(answer) {
     if (answer.group) {
+        // Set the current group and show the first question of that group
         currentGroup = answer.group;
-        displayQuestion();
+        displayNextGroupQuestion();
     } else {
+        // Answer from a group question
         if (answer.person) {
+            // A specific person was selected, determine final output
             finalOutput = answer.person;
-            displayFinalOutput();
-            return;
-        }
-        if (currentGroup && askedQuestions.size < questionGroups[currentGroup].length - 1) {
-            askedQuestions.add(currentQuestionNumber);
-            currentQuestionNumber++;
-            displayQuestion();
+            fillRemainingQuestionsWithRandom();
         } else {
-            // Handle random questions logic here
+            // No person was selected, continue with the group questions
+            if (currentGroup && askedQuestions.size < 6) {
+                // Still have questions left in the group
+                displayNextGroupQuestion();
+            } else {
+                // Move on to the special question 9 after 6 questions
+                if (currentQuestionNumber === 9) {
+                    finalOutput = answer.person;
+                    displayRandomQuestion();
+                } else if (currentQuestionNumber === 10) {
+                    finalOutput = answer.person;
+                    displayFinalOutput();
+                } else {
+                    // We've finished the group questions, no specific person was selected
+                    displaySpecialQuestion9();
+                }
+            }
         }
     }
+}
+
+function displayNextGroupQuestion() {
+    let nextQuestionIndex;
+    do {
+        nextQuestionIndex = Math.floor(Math.random() * questionGroups[currentGroup].length);
+    } while (askedQuestions.has(nextQuestionIndex));
+    
+    askedQuestions.add(nextQuestionIndex);
+    currentQuestionNumber++;
+    displayQuestion(questionGroups[currentGroup][nextQuestionIndex]);
+}
+
+function displayRandomQuestion() {
+    let nextQuestionIndex;
+    do {
+        nextQuestionIndex = Math.floor(Math.random() * questionGroups.randomQuestions.length);
+    } while (askedQuestions.has(nextQuestionIndex + 100)); // Adding 100 to distinguish random questions indexes
+
+    askedQuestions.add(nextQuestionIndex + 100); // Track random questions separately
+    currentQuestionNumber++;
+    displayQuestion(questionGroups.randomQuestions[nextQuestionIndex]);
+}
+
+function displaySpecialQuestion9() {
+    // Directly access question 9 and display it
+    currentQuestionNumber++;
+    displayQuestion(questionGroups.specialQuestion9);
+}
+
+function fillRemainingQuestionsWithRandom() {
+    // If we have determined the final output before reaching question 10,
+    // we still need to fill the remaining questions with random ones.
+    while (currentQuestionNumber < 10) {
+        displayRandomQuestion();
+    }
+    displayFinalOutput();
 }
 
 function displayFinalOutput() {
