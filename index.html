@@ -445,50 +445,17 @@ function handleAnswer(answerStr) {
     displayQuestion();
 }
 
-// Shuffle function
-function shuffle(array) {
-  let currentIndex = array.length, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex !== 0) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
-}
-
-// Shuffles all question groups and random questions when the quiz starts
-Object.keys(questionGroups).forEach(group => {
-  if (Array.isArray(questionGroups[group])) {
-    shuffle(questionGroups[group]);
-  }
-});
-
 function getQuestionFromGroup(groupKey) {
-    // Retrieve the question group based on the key
     const group = questionGroups[groupKey];
-    // Check if the group exists and if it's an array
+    let questionData;
     if (Array.isArray(group)) {
-        // Check if the group has already been shuffled
-        if (!group.shuffled) {
-            shuffle(group); // Shuffle the group
-            group.shuffled = true; // Mark the group as shuffled
-        }
-        // Find the first question in the group that hasn't been asked
-        const questionData = group.find(q => !askedQuestions.has(q.questionText));
-        // If a question is found, mark it as asked
-        if (questionData) {
-            askedQuestions.add(questionData.questionText);
-            return questionData;
-        }
+        questionData = group.find(q => !askedQuestions.has(q.questionText));
+        if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
     }
-    return null; // Return null if no unasked questions are left or group does not exist
+    return questionData;
 }
 
 function updateQuestionCounter() {
@@ -497,7 +464,7 @@ function updateQuestionCounter() {
 
 function displayFinalOutput() {
     const resultContainer = document.getElementById('result');
-    const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
+    const resultText = finalCharacter ? `Your result is: ${finalCharacter}` : "No final character determined.";
     resultContainer.innerHTML = `<h2>${resultText}</h2>`;
 }
 
