@@ -441,25 +441,13 @@ function displayQuestion() {
 
 function handleAnswer(answer) {
     if (answer.group) {
-        // If the answer leads to a new group, update the current group key
         currentGroupKey = answer.group;
-        askedQuestions.clear(); // Reset the asked questions for the new group
-        finalCharacter = ''; // Reset finalCharacter in case of backtracking or changing groups
     } else if (answer.person) {
-        // If the answer associates with a character, update finalCharacter
         finalCharacter = answer.person;
-        // Optionally move to a concluding phase or random questions, depending on your quiz logic
-        currentGroupKey = 'randomQuestions'; // Example, switch to random questions or prepare to conclude
+        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
     }
 
-    // Update logic for when "Something else..." is selected
-    if (answer.text === "Something else...") {
-        // Specific logic for handling "Something else..." selection
-        // Assuming "Something else..." directly leads to Question 10
-        readyForQuestion10 = true; // Assuming you have a flag readyForQuestion10 to manage this
-    }
-
-    displayQuestion(); // Proceed to display the next question based on the updated state
+    displayQuestion();
 }
 
 function shuffleArray(array) {
@@ -473,30 +461,20 @@ function getQuestionFromGroup(groupKey) {
     let group = questionGroups[groupKey];
     let questionData;
 
-    // Ensure we only shuffle and handle the group questions once
-    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions' && !askedQuestions.size) {
-        // Shuffle the first 6 questions of the group
-        let questionsToShuffle = group.slice(0, 6);
-        shuffleArray(questionsToShuffle);
-        // Replace the original group questions with shuffled followed by the unshuffled rest
-        questionGroups[groupKey] = questionsToShuffle.concat(group.slice(6));
+    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
+    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
+        shuffleArray(group);
     }
 
-    // Logic to decide which question to fetch from the group
     if (Array.isArray(group)) {
-        if (askedQuestions.size >= 6 && !finalCharacter) {
-            // Directly move to question 9 if 6 questions have been asked and no character chosen
-            questionData = group[6]; // Assuming question 9 is at index 6 in the array
-        } else if (askedQuestions.size === 7 && !finalCharacter) {
-            // Move to question 10 if "Something else..." was chosen
-            questionData = group[7]; // Assuming question 10 is at index 7
-        } else {
-            // Find the next question that hasn't been asked yet
-            questionData = group.find(q => !askedQuestions.has(q.questionText));
-        }
+        // Find the first question that hasn't been asked yet
+        questionData = group.find(q => !askedQuestions.has(q.questionText));
 
-        // Mark the question as asked if found
+        // If a question is found, mark it as asked
         if (questionData) askedQuestions.add(questionData.questionText);
+    } else if (!askedQuestions.has(group.questionText)) {
+        questionData = group;
+        askedQuestions.add(group.questionText);
     }
 
     return questionData;
