@@ -524,6 +524,27 @@ const characterImageMap = {
     "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
 };
 function displayFinalOutput() {
+    // Check if the final output is being triggered prematurely
+    if (!finalCharacter && questionCount <= 8) {
+        // Since no character has been chosen and we haven't asked all 10 questions, proceed to questions 9 and 10
+        // Adjust currentGroupKey to include "NineTen" to target the special group for these questions
+        if (!currentGroupKey.includes("NineTen")) {
+            currentGroupKey += "NineTen";
+            askedQuestions.clear(); // Clear asked questions to ensure questions 9 and 10 are not skipped
+        }
+
+        // Check if we are ready for question 10 (in case "Something else..." was chosen)
+        if (readyForQuestion10) {
+            // Directly access and display Question 10
+            displayQuestionDirectly(1); // Assuming 1 is the index for Question 10 in the NineTen group
+        } else {
+            // Display Question 9 first
+            displayQuestionDirectly(0); // Assuming 0 is the index for Question 9 in the NineTen group
+        }
+        return; // Prevent the default final output display
+    }
+
+    // Original final output display logic for when a character is determined or all questions are asked
     // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
     questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
@@ -548,6 +569,16 @@ function displayFinalOutput() {
         } else {
             console.log('No image found for ' + finalCharacter);
         }
+    }
+}
+
+function displayQuestionDirectly(index) {
+    const group = questionGroups[currentGroupKey];
+    if (group && index < group.length) {
+        const questionData = group[index];
+        // Proceed to display the selected question
+        // The code here would be similar to the question display logic in `displayQuestion`
+        displayQuestionContent(questionData); // A hypothetical function to handle actual question display
     }
 }
 
