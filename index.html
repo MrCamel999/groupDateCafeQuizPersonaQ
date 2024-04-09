@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Date Cafe Quiz</title>
+<style>
+  /* Basic styling; update as needed */
+  body {
+    font-family: Arial, sans-serif;
+  }
+  #quiz-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+  .question {
+    margin-bottom: 10px;
+  }
+  .answers button {
+    margin-right: 10px;
+    padding: 5px 10px;
+  }
+</style>
+</head>
+<body>
+  <div id="quiz-container">
+    <!-- Question content will be added here -->
+  </div>
+
+<script>
+// Placeholder for the actual questions and answers
+const starterQuestions = {
+  1: {
+    questionText: "Does a difference in age or sex not matter as long as there is love?",
+    answers: [
+      { text: "Their sex matters (go to 2A)", goTo: 2 },
+      { text: "It doesn't matter at all! (go to 2B)", goTo: 3 }
+    ]
+  },
+  // Add more starter questions and groups as needed
+};
+
+const groups = {
+  // Placeholder for groups; fill with your actual data
+};
+
+let currentQuestionNumber = 1;
+let chosenGroup = null;
+let answeredQuestions = [];
+let finalOutputDetermined = false;
+
+function displayQuestion(questionNumber) {
+  const question = starterQuestions[questionNumber];
+  const quizContainer = document.getElementById('quiz-container');
+  quizContainer.innerHTML = `<div class='question'>
+                               <h2>Question ${currentQuestionNumber}</h2>
+                               <p>${question.questionText}</p>
+                             </div>
+                             <div class='answers'>
+                               ${question.answers.map((answer, index) => 
+                                 `<button onclick='handleAnswer(${index}, ${question.answers[index].goTo})'>${answer.text}</button>`
+                               ).join('')}
+                             </div>`;
+}
+
+function handleAnswer(answerIndex, nextQuestionNumber) {
+  // This is where you'll add the logic for branching and randomizing questions
+  if (nextQuestionNumber === 2) {
+    // Logic to choose Group 1 or 3
+  } else if (nextQuestionNumber === 3) {
+    // Logic to choose Group 2 or 4
+  }
+  // Update the current question number and display the next question
+  currentQuestionNumber++;
+  displayQuestion(nextQuestionNumber);
+}
+
+// Initial call to display the first question
+displayQuestion(currentQuestionNumber);
+
+</script>
+</body>
+</html>
