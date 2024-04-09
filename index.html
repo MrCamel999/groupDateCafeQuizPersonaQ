@@ -539,25 +539,7 @@ function displayFinalOutput() {
                 { text: "Someone mysterious in a sleek car", person: "Margaret" },
                 { text: "Something else...", person: null }
             ];
-            questionCount = 9;
-            if (!finalCharacter) {
-                let questionText10 = '';
-                let answers10 = [];
-
-                if (currentGroupKey.startsWith('group1')) {
-                    questionText10 = "What kind of girl makes your heart skip a beat?";
-                    answers10 = [
-                        { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
-                        { text: "Overwhelming intellect", person: "Naoto Shirogane" },
-                        { text: "A healthy appetite", person: "Rei" },
-                    ];
-                }
-                // Replicate the structure above for other groups with their specific question 10 content
-
-                questionCount = 10;
-            }
         }
-
         // Add similar if-else blocks for other groups (group2, group3, group4) with their respective question 9 content
 
         // If question 9 was specifically set for this group, display it
