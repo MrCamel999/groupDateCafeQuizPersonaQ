@@ -530,7 +530,7 @@ function displayFinalOutput() {
         let questionText = '';
         let answers = [];
         
-        // Example for group1, replicate for other groups with their specific question 9 content
+        // Setup for question 9 display
         if (currentGroupKey.startsWith('group1')) {
             questionText = "What you look for in a woman is...";
             answers = [
@@ -539,8 +539,31 @@ function displayFinalOutput() {
                 { text: "Someone mysterious in a sleek car", person: "Margaret" },
                 { text: "Something else...", person: null }
             ];
+        } else if (currentGroupKey.startsWith('group2')) {
+            questionText = "What you look for in a man is...";
+            answers = [
+                { text: "A great sense of humor", person: "Junpei Iori" },
+                { text: "Well-honed muscles", person: "Akihiko Sanada" },
+                { text: "Rock-solid reliability", person: "Yu Narukami" },
+                { text: "Something else...", person: null }
+            ];
+        } else if (currentGroupKey.startsWith('group3')) {
+            questionText = "What you look for in a woman is...";
+            answers = [
+                { text: "Brains and beauty", person: "Mitsuru Kirijo" },
+                { text: "An invincible idol smile", person: "Rise Kujikawa" },
+                { text: "Polite and proper behaviour", person: "Elizabeth" },
+                { text: "Something else...", person: null }
+            ];
+        } else if (currentGroupKey.startsWith('group4')) {
+            questionText = "What you look for in a man is...";
+            answers = [
+                { text: "A motherly, caring side", person: "Shinjiro Aragaki" },
+                { text: "A cool, but wild side", person: "Makoto Yuki" },
+                { text: "Skilled hands", person: "Kanji Tatsumi" },
+                { text: "Something else...", person: null }
+            ];
         }
-        // Add similar if-else blocks for other groups (group2, group3, group4) with their respective question 9 content
 
         // If question 9 was specifically set for this group, display it
         if (questionText && answers.length > 0) {
@@ -560,8 +583,45 @@ function displayFinalOutput() {
 
             // Ensure questionCount reflects showing question 9
             questionCount = 9;
+        }
+
+        // Check if we need to display Question 10 (assuming "Something else..." leads to no finalCharacter)
+        if (!finalCharacter && questionCount === 9) {
+            // Directly specify content for Question 10 for the current group
+            // (Assuming 'currentGroupKey' includes 'NineTen' if in the context of Question 10)
+            let questionText10 = '';
+            let answers10 = [];
             
-            return; // Skip the rest of the final output logic
+            // Example for group1NineTen (extend this pattern for group2NineTen, group3NineTen, and group4NineTen)
+            if (currentGroupKey.startsWith('group1')) {
+                questionText10 = "What kind of girl makes your heart skip a beat?";
+                answers10 = [
+                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                    { text: "A healthy appetite", person: "Rei" },
+                ];
+            } else if (currentGroupKey.startsWith('group2')) {
+                // Define questionText10 and answers10 for group2NineTen
+            } // Repeat the pattern for groups 3 and 4
+
+            // Check if we've prepared content for Question 10 and display it
+            if (questionText10 && answers10.length > 0) {
+                const questionContainer = document.getElementById('question');
+                const answersContainer = document.getElementById('answers');
+
+                questionContainer.innerHTML = `<h2>${questionText10}</h2>`;
+                answersContainer.innerHTML = ''; // Clear previous answers
+
+                // Populate the answers for Question 10
+                answers10.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.textContent = answer.text;
+                    button.onclick = () => handleAnswer(answer);
+                    answersContainer.appendChild(button);
+                });
+
+                questionCount = 10; // Manually set questionCount to 10 after displaying Question 10
+            }
         }
     }
 
