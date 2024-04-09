@@ -525,26 +525,20 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    // When the final output is prematurely called before reaching 10 questions
-    if (!finalCharacter && questionCount < 10) {
-        // Adjust the currentGroupKey if not already set to the correct NineTen group
-        if (!currentGroupKey.endsWith('NineTen')) {
-            currentGroupKey = currentGroupKey + 'NineTen';
+    // Only attempt to redirect to Question 9 if the final character has not been determined
+    // and the question count indicates we're prematurely trying to show the final output.
+    if (!finalCharacter && questionCount === 8) {
+        // Ensure we're targeting the correct NineTen group for Question 9 and 10.
+        const intendedGroupKey = currentGroupKey + 'NineTen';
+        // Verify the intended group exists and has the expected questions.
+        if (questionGroups[intendedGroupKey] && questionGroups[intendedGroupKey].length > 1) {
+            currentGroupKey = intendedGroupKey; // Update the group key to the NineTen group.
+            // Directly fetch and display Question 9 from the NineTen group.
+            const question9Data = questionGroups[currentGroupKey][0]; // Assuming the first question is Question 9.
+            displayQuestionContent(question9Data);
+            questionCount = 9; // Correctly update the questionCount to reflect Question 9 being displayed.
+            return; // Prevent the final result from being displayed prematurely.
         }
-
-        // If questionCount is 9, it indicates we should display question 9 (or 10 if 9 has been shown)
-        // Here we decide which question of the NineTen group to display
-        const questionIndex = (questionCount === 9) ? 0 : 1; // Assuming question 9 has not been shown if count is 9
-
-        // Fetch and display the question directly without altering the flow
-        const groupQuestions = questionGroups[currentGroupKey];
-        const questionData = groupQuestions[questionIndex];
-        displayQuestionContent(questionData);
-
-        // Since we're handling the display manually, increment questionCount to prevent repeated triggers
-        questionCount++;
-
-        return; // Prevent displaying the final result prematurely
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
