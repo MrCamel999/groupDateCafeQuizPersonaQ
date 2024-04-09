@@ -585,6 +585,44 @@ function displayFinalOutput() {
             questionCount = 9;
         }
 
+        if (currentGroupKey.endsWith('NineTen')) {
+            let questionText10 = '';
+            let answers10 = [];
+            if (currentGroupKey.startsWith('group1')) {
+                questionText10 = "What kind of girl makes your heart skip a beat?";
+                answers10 = [
+                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
+                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
+                    { text: "A healthy appetite", person: "Rei" },
+                ];
+            } else if (currentGroupKey.startsWith('group2')) {
+                questionText10 = "Your preferred type in a nutshell?";
+                answers10 = [
+                    { text: "Youth that tries to act mature", person: "Ken Amada" },
+                    { text: "A pure heart", person: "Teddie" },
+                    { text: "Overwhelming adorableness", person: "Koromaru" },
+                ];
+            } // Continue for groups 3 and 4 as well
+
+            if (questionText10 && answers10.length > 0) {
+                const questionContainer = document.getElementById('question');
+                const answersContainer = document.getElementById('answers');
+                
+                questionContainer.innerHTML = `<h2>${questionText10}</h2>`;
+                answersContainer.innerHTML = ''; // Clear previous answers
+                
+                // Populate the answers for Question 10
+                answers10.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.textContent = answer.text;
+                    button.addEventListener('click', () => handleAnswer(answer));
+                    answersContainer.appendChild(button);
+                });
+
+                questionCount = 10; // Ensure questionCount reflects showing Question 10
+            }
+        }
+
         return;
     }
 
