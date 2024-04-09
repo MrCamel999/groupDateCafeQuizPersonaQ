@@ -359,29 +359,44 @@ const questionGroups = {
 };
 
 
+let currentQuestionNumber = 0; // Initialize question counter
 let currentGroupKey = 'starter';
 let askedQuestions = new Set(); // Keep track of asked questions for randomness
 let finalCharacter = ''; // Final character/result
+let totalQuestions = 10; // Total questions to be asked
 
 function displayQuestion() {
-    const group = questionGroups[currentGroupKey];
-    const questionData = Array.isArray(group) ? group.find(q => !askedQuestions.has(q.questionText)) : group;
-    const questionContainer = document.getElementById('question');
-    const answersContainer = document.getElementById('answers');
+    // Increase question counter and display it
+    currentQuestionNumber++;
+    document.getElementById('question-counter').textContent = `Question ${currentQuestionNumber}/10`;
 
-    if (!questionData) {
-        // If no questionData is found, it means all questions in the group were asked
-        displayFinalOutput(); // Show results or lack thereof
+    // Check if we've reached 10 questions
+    if (currentQuestionNumber > totalQuestions) {
+        displayFinalOutput();
         return;
     }
 
-    // Set the question text
-    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
+    let questionData;
+    // If finalCharacter is already determined, pull from randomQuestions, otherwise, continue as before
+    if (finalCharacter && currentQuestionNumber <= totalQuestions) {
+        questionData = getRandomQuestion('randomQuestions');
+    } else {
+        const group = questionGroups[currentGroupKey];
+        questionData = Array.isArray(group) ? group.find(q => !askedQuestions.has(q.questionText)) : group;
+    }
 
-    // Clear previous answers
+    if (!questionData) {
+        displayFinalOutput(); // No more questions or end of quiz
+        return;
+    }
+
+    // Standard procedure to display question and answers
+    const questionContainer = document.getElementById('question');
+    const answersContainer = document.getElementById('answers');
+
+    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
     answersContainer.innerHTML = '';
 
-    // Create buttons for new answers
     questionData.answers.forEach(answer => {
         const button = document.createElement('button');
         button.textContent = answer.text;
@@ -390,7 +405,7 @@ function displayQuestion() {
     });
 
     if (Array.isArray(group)) {
-        askedQuestions.add(questionData.questionText); // Mark this question as asked
+        askedQuestions.add(questionData.questionText);
     }
 }
 
@@ -400,13 +415,22 @@ function handleAnswer(answer) {
         currentGroupKey = answer.group;
         askedQuestions.clear(); // Reset asked questions for the new group
     } else if (answer.person) {
-        // If an answer directly points to a character, set the finalCharacter and display it
-        finalCharacter = answer.person;
-        displayFinalOutput();
-        return;
+        finalCharacter = answer.person; // Determine final character, if applicable
     }
 
     displayQuestion();
+}
+
+function getRandomQuestion(groupKey) {
+    const group = questionGroups[groupKey];
+    let randomIndex, questionData;
+    do {
+        randomIndex = Math.floor(Math.random() * group.length);
+        questionData = group[randomIndex];
+    } while (askedQuestions.has(questionData.questionText)); // Ensure unique question
+
+    askedQuestions.add(questionData.questionText);
+    return questionData;
 }
 
 function displayNextGroupQuestion() {
@@ -463,10 +487,8 @@ function fillRemainingQuestionsWithRandom() {
 }
 
 function displayFinalOutput() {
-    // Display the final character or a default message if none was selected
     const resultContainer = document.getElementById('result');
-    const message = finalCharacter ? `Your result is: ${finalCharacter}` : "It seems we couldn't determine an outcome. Try again?";
-    resultContainer.innerHTML = message;
+    resultContainer.innerHTML = finalCharacter ? `Your result is: ${finalCharacter}` : "Quiz complete! Thanks for playing.";
 }
 
 // Start the quiz
