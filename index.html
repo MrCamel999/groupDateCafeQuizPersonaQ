@@ -428,13 +428,18 @@ function displayQuestion() {
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
     questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
-    answersContainer.innerHTML = questionData.answers.map(answer => 
-        `<button onclick="handleAnswer('${JSON.stringify(answer).replace(/"/g, '&quot;')}')">${answer.text}</button>`
-    ).join('');
+    answersContainer.innerHTML = ''; // Clear previous answers
+
+    // Create buttons for each answer and attach event listeners
+    questionData.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.textContent = answer.text;
+        button.addEventListener('click', () => handleAnswer(answer));
+        answersContainer.appendChild(button);
+    });
 }
 
-function handleAnswer(answerStr) {
-    const answer = JSON.parse(answerStr.replace(/&quot;/g, '"'));
+function handleAnswer(answer) {
     if (answer.group) {
         currentGroupKey = answer.group;
     } else if (answer.person) {
