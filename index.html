@@ -402,6 +402,8 @@ let askedQuestions = new Set();
 let finalCharacter = ''; 
 let questionCount = 0;
 const totalQuestions = 10;
+let shuffledQuestions = null;
+let questionsAsked = 0;
 
 function displayQuestion() {
     if (questionCount >= totalQuestions) {
@@ -441,10 +443,19 @@ function displayQuestion() {
 
 function handleAnswer(answer) {
     if (answer.group) {
+        if (currentGroupKey !== answer.group) {
+            // Reset when changing groups
+            shuffledQuestions = null;
+            questionsAsked = 0;
+        }
         currentGroupKey = answer.group;
     } else if (answer.person) {
         finalCharacter = answer.person;
-        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
+        // If a character is determined, switch to random questions or conclude
+        currentGroupKey = 'randomQuestions'; 
+    } else if (answer.text === "Something else...") {
+        // For "Something else...", we know it's from question 9, decide next step
+        questionsAsked = 7; // Set to ask the next question, assuming it's question 10
     }
 
     displayQuestion();
@@ -459,25 +470,21 @@ function shuffleArray(array) {
 
 function getQuestionFromGroup(groupKey) {
     let group = questionGroups[groupKey];
-    let questionData;
 
-    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
-    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
-        shuffleArray(group);
+    if (groupKey !== 'starter' && groupKey !== 'randomQuestions' && !shuffledQuestions) {
+        // Shuffle only the first time entering a group, excluding starter and randomQuestions
+        shuffledQuestions = [...group].slice(0, 6);
+        shuffleArray(shuffledQuestions);
+        shuffledQuestions.push(...group.slice(6)); // Add the remaining questions unshuffled
     }
 
-    if (Array.isArray(group)) {
-        // Find the first question that hasn't been asked yet
-        questionData = group.find(q => !askedQuestions.has(q.questionText));
-
-        // If a question is found, mark it as asked
-        if (questionData) askedQuestions.add(questionData.questionText);
-    } else if (!askedQuestions.has(group.questionText)) {
-        questionData = group;
-        askedQuestions.add(group.questionText);
+    if (Array.isArray(shuffledQuestions)) {
+        if (questionsAsked < shuffledQuestions.length) {
+            const questionData = shuffledQuestions[questionsAsked++];
+            return questionData;
+        }
     }
-
-    return questionData;
+    return null; // When all questions have been asked or for non-array groups
 }
 
 function updateQuestionCounter() {
