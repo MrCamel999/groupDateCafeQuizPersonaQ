@@ -524,6 +524,22 @@ const characterImageMap = {
     "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
 };
 function displayFinalOutput() {
+    if (!finalCharacter && questionCount < 10) {
+        // Check if we're transitioning to questions 9 or 10 instead of showing the final output
+        if (currentGroupKey.endsWith('NineTen') && questionCount === 9) {
+            // Directly display question 10, assuming question 9 was displayed but did not result in a character selection
+            const questionData = questionGroups[currentGroupKey][1]; // Index 1 is for question 10 in the NineTen group
+            displayQuestionContent(questionData);
+        } else {
+            // Adjust the group key to target the NineTen group for question 9
+            currentGroupKey = currentGroupKey.replace('NineTen', '') + 'NineTen';
+            const questionData = questionGroups[currentGroupKey][0]; // Index 0 is for question 9 in the NineTen group
+            displayQuestionContent(questionData);
+            questionCount = 9; // Ensure we're correctly tracking the number of questions asked
+        }
+        return; // Prevent the default final output from displaying prematurely
+    }
+
     // Update the question counter to show "Final Result" surrounded by heart emojis
     const questionCounter = document.getElementById('question-counter');
     questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
@@ -549,6 +565,27 @@ function displayFinalOutput() {
             console.log('No image found for ' + finalCharacter);
         }
     }
+}
+
+function displayQuestionContent(questionData) {
+    const questionContainer = document.getElementById('question');
+    const answersContainer = document.getElementById('answers');
+    
+    // Ensure the question and answers are visible
+    questionContainer.style.display = '';
+    answersContainer.style.display = '';
+    
+    // Set the question text
+    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
+    answersContainer.innerHTML = ''; // Clear previous answers
+    
+    // Create buttons for each answer
+    questionData.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.textContent = answer.text;
+        button.onclick = () => handleAnswer(answer);
+        answersContainer.appendChild(button);
+    });
 }
 
 // Adding the question counter element dynamically
