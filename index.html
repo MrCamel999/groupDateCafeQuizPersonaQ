@@ -396,11 +396,12 @@ const questionGroups = {
     ]
 };
 
-
+// Declaring & Initializing variables
 let currentGroupKey = 'starter';
 let askedQuestions = new Set();
 let finalCharacter = ''; 
 let questionCount = 0;
+let currentQuestionNumberWithinGroup = 0;
 const totalQuestions = 10;
 
 function displayQuestion() {
@@ -408,8 +409,9 @@ function displayQuestion() {
         displayFinalOutput();
         return;
     }
-    
+
     questionCount++;
+    currentQuestionNumberWithinGroup++; // Increment each time a new question is displayed
     updateQuestionCounter();
 
     const group = questionGroups[currentGroupKey];
@@ -417,7 +419,14 @@ function displayQuestion() {
     if (finalCharacter || currentGroupKey === 'randomQuestions') {
         questionData = getQuestionFromGroup('randomQuestions');
     } else {
-        questionData = getQuestionFromGroup(currentGroupKey);
+        // Check if it's time for Question #9 or #10
+        if (currentQuestionNumberWithinGroup === 9) {
+            questionData = group[group.length - 2]; // Assuming second to last question is #9
+        } else if (currentQuestionNumberWithinGroup > 9) {
+            questionData = group[group.length - 1]; // Last question for "Something else..."
+        } else {
+            questionData = getQuestionFromGroup(currentGroupKey);
+        }
     }
 
     if (!questionData) {
@@ -442,9 +451,14 @@ function displayQuestion() {
 function handleAnswer(answer) {
     if (answer.group) {
         currentGroupKey = answer.group;
+        currentQuestionNumberWithinGroup = 0; // Reset when changing groups
     } else if (answer.person) {
         finalCharacter = answer.person;
-        currentGroupKey = 'randomQuestions'; // Switch to random questions after determining finalCharacter
+        currentGroupKey = 'randomQuestions'; // Move to random questions after determining finalCharacter
+        currentQuestionNumberWithinGroup = 0; // Reset this as well
+    } else if (answer.text === "Something else...") {
+        // Logic for "Something else...", ensure next is Question #10
+        currentQuestionNumberWithinGroup = 9; // Force to question 10, adjust if your index differs
     }
 
     displayQuestion();
