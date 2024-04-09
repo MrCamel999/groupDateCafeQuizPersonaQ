@@ -585,44 +585,7 @@ function displayFinalOutput() {
             questionCount = 9;
         }
 
-        // Check if we need to display Question 10 (assuming "Something else..." leads to no finalCharacter)
-        if (!finalCharacter && questionCount === 9) {
-            // Directly specify content for Question 10 for the current group
-            // (Assuming 'currentGroupKey' includes 'NineTen' if in the context of Question 10)
-            let questionText10 = '';
-            let answers10 = [];
-            
-            // Example for group1NineTen (extend this pattern for group2NineTen, group3NineTen, and group4NineTen)
-            if (currentGroupKey.startsWith('group1')) {
-                questionText10 = "What kind of girl makes your heart skip a beat?";
-                answers10 = [
-                    { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
-                    { text: "Overwhelming intellect", person: "Naoto Shirogane" },
-                    { text: "A healthy appetite", person: "Rei" },
-                ];
-            } else if (currentGroupKey.startsWith('group2')) {
-                // Define questionText10 and answers10 for group2NineTen
-            } // Repeat the pattern for groups 3 and 4
-
-            // Check if we've prepared content for Question 10 and display it
-            if (questionText10 && answers10.length > 0) {
-                const questionContainer = document.getElementById('question');
-                const answersContainer = document.getElementById('answers');
-
-                questionContainer.innerHTML = `<h2>${questionText10}</h2>`;
-                answersContainer.innerHTML = ''; // Clear previous answers
-
-                // Populate the answers for Question 10
-                answers10.forEach(answer => {
-                    const button = document.createElement('button');
-                    button.textContent = answer.text;
-                    button.onclick = () => handleAnswer(answer);
-                    answersContainer.appendChild(button);
-                });
-
-                questionCount = 10; // Manually set questionCount to 10 after displaying Question 10
-            }
-        }
+        return;
     }
 
     // Update the question counter to show "Final Result" surrounded by heart emojis
