@@ -584,13 +584,13 @@ function displayFinalOutput() {
             // Ensure questionCount reflects showing question 9
             questionCount = 9;
         }
-        
-        if (!finalCharacter && questionCount == 9) { // Use '==' for comparison
+
+        if (!finalCharacter && questionCount == 9) {
             let questionText10 = '';
             let answers10 = [];
             // Assuming 'groupXNineTen' is correctly set when moving to Question 10
-            if (currentGroupKey.endsWith('NineTen')) {
-                if (currentGroupKey.startsWith('group1NineTen')) {
+            if (currentGroupKey.startsWith('group')) {
+                if (currentGroupKey.startsWith('group1')) {
                     questionText10 = "What kind of girl makes your heart skip a beat?";
                     answers10 = [
                         { text: "Someone reserved and considerate", person: "Fuuka Yamagishi" },
