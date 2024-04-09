@@ -358,57 +358,55 @@ const questionGroups = {
     ]
 };
 
-let currentQuestionNumber = 1;
-let currentGroup = 'starter';
-let askedQuestions = new Set();
-let finalOutput = null;
 
-function displayQuestion(questionData) {
+let currentGroupKey = 'starter';
+let askedQuestions = new Set(); // Keep track of asked questions for randomness
+let finalCharacter = ''; // Final character/result
+
+function displayQuestion() {
+    const group = questionGroups[currentGroupKey];
+    const questionData = Array.isArray(group) ? group.find(q => !askedQuestions.has(q.questionText)) : group;
     const questionContainer = document.getElementById('question');
     const answersContainer = document.getElementById('answers');
 
-    questionContainer.innerHTML = `<h2>Question ${currentQuestionNumber}</h2><p>${questionData.questionText}</p>`;
+    if (!questionData) {
+        // If no questionData is found, it means all questions in the group were asked
+        displayFinalOutput(); // Show results or lack thereof
+        return;
+    }
+
+    // Set the question text
+    questionContainer.innerHTML = `<h2>${questionData.questionText}</h2>`;
+
+    // Clear previous answers
     answersContainer.innerHTML = '';
 
-    questionData.answers.forEach((answer, index) => {
+    // Create buttons for new answers
+    questionData.answers.forEach(answer => {
         const button = document.createElement('button');
         button.textContent = answer.text;
-        button.addEventListener('click', () => handleAnswer(answer));
+        button.onclick = () => handleAnswer(answer);
         answersContainer.appendChild(button);
     });
+
+    if (Array.isArray(group)) {
+        askedQuestions.add(questionData.questionText); // Mark this question as asked
+    }
 }
 
 function handleAnswer(answer) {
     if (answer.group) {
-        // Set the current group and show the first question of that group
-        currentGroup = answer.group;
-        displayNextGroupQuestion();
-    } else {
-        // Answer from a group question
-        if (answer.person) {
-            // A specific person was selected, determine final output
-            finalOutput = answer.person;
-            fillRemainingQuestionsWithRandom();
-        } else {
-            // No person was selected, continue with the group questions
-            if (currentGroup && askedQuestions.size < 6) {
-                // Still have questions left in the group
-                displayNextGroupQuestion();
-            } else {
-                // Move on to the special question 9 after 6 questions
-                if (currentQuestionNumber === 9) {
-                    finalOutput = answer.person;
-                    displayRandomQuestion();
-                } else if (currentQuestionNumber === 10) {
-                    finalOutput = answer.person;
-                    displayFinalOutput();
-                } else {
-                    // We've finished the group questions, no specific person was selected
-                    displaySpecialQuestion9();
-                }
-            }
-        }
+        // If the answer transitions to a new group, update the group and display the first question from it
+        currentGroupKey = answer.group;
+        askedQuestions.clear(); // Reset asked questions for the new group
+    } else if (answer.person) {
+        // If an answer directly points to a character, set the finalCharacter and display it
+        finalCharacter = answer.person;
+        displayFinalOutput();
+        return;
     }
+
+    displayQuestion();
 }
 
 function displayNextGroupQuestion() {
@@ -465,9 +463,10 @@ function fillRemainingQuestionsWithRandom() {
 }
 
 function displayFinalOutput() {
+    // Display the final character or a default message if none was selected
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = finalOutput ? `Your result is: ${finalOutput}` : "No result found.";
-    // Reset quiz or navigate to a different page
+    const message = finalCharacter ? `Your result is: ${finalCharacter}` : "It seems we couldn't determine an outcome. Try again?";
+    resultContainer.innerHTML = message;
 }
 
 // Start the quiz
