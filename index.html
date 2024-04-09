@@ -404,6 +404,8 @@ let currentQuestionNumberWithinGroup = 0;
 let somethingElseSelected = false;
 let showQuestion9 = false; // Indicates when to explicitly show question 9
 let showQuestion10 = false; // Indicates when to move to question 10
+let readyForQuestion9 = false;
+let readyForQuestion10 = false;
 const totalQuestions = 10;
 
 function displayQuestion() {
@@ -412,26 +414,37 @@ function displayQuestion() {
         return;
     }
 
-    questionCount++;
-    updateQuestionCounter();
-
     let questionData;
+    const group = questionGroups[currentGroupKey];
 
+    // When finalCharacter is determined or in randomQuestions mode
     if (finalCharacter || currentGroupKey === 'randomQuestions') {
         questionData = getQuestionFromGroup('randomQuestions');
     } else {
-        const group = questionGroups[currentGroupKey];
-
-        if (showQuestion10) {
+        if (readyForQuestion10) {
             // Directly access Question 10
             questionData = group[group.length - 1];
-            showQuestion9 = false; // Reset flag
-        } else if (showQuestion9) {
-            // Directly access Question 9
-            questionData = group[group.length - 2];
-            showQuestion9 = false; // Ensure we don't repeat Question 9
+            readyForQuestion10 = false; // Reset for next time
+        } else if (readyForQuestion9) {
+            // Access Question 9
+            questionData = group.find(q => q.answers.some(a => a.text === "Something else..."));
+            readyForQuestion9 = false; // Ensure this is a one-time flag
         } else {
-            questionData = getQuestionFromGroup(currentGroupKey);
+            // Regular question flow before reaching Question 9
+            questionData = getNextQuestionFromGroup(currentGroupKey);
+
+            if (!questionData) {
+                // If no more regular questions, check if we need to show Q9 or jump to random
+                if (!finalCharacter && questionCount < totalQuestions - 1) {
+                    // We haven't determined a character, and there's room for more questions
+                    readyForQuestion9 = true;
+                    displayQuestion(); // Recursive call to immediately process Q9 logic
+                    return;
+                } else {
+                    displayFinalOutput(); // No more questions to show
+                    return;
+                }
+            }
         }
     }
 
@@ -455,26 +468,20 @@ function displayQuestion() {
 }
 
 function handleAnswer(answer) {
-    // Check if "Something else..." is selected
     if (answer.text === "Something else...") {
-        showQuestion10 = true; // Prepare to show question 10
+        readyForQuestion10 = true; // Set flag to move to question 10
     } else {
-        // Process answer normally
         if (answer.group) {
             currentGroupKey = answer.group;
+            // Reset flags as we're moving to a new group or section
+            readyForQuestion9 = false;
+            readyForQuestion10 = false;
         } else if (answer.person) {
             finalCharacter = answer.person;
-            currentGroupKey = 'randomQuestions';
-        }
-
-        // Increment question count and control for showing question 9
-        currentQuestionNumberWithinGroup++;
-        if (currentQuestionNumberWithinGroup > 6 && !finalCharacter && !showQuestion10) {
-            showQuestion9 = true; // After first 6 questions without a character, prepare to show question 9
+            currentGroupKey = 'randomQuestions'; // Proceed to random if a character is chosen
         }
     }
-
-    displayQuestion();
+    displayQuestion(); // Proceed to display the next question
 }
 
 function shuffleArray(array) {
