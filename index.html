@@ -525,49 +525,44 @@ const characterImageMap = {
 };
 
 function displayFinalOutput() {
-    if (!finalCharacter && questionCount < 10) {
-        // Determine if we should be displaying question 9 or 10
-        // Adjust the group key to ensure it ends with 'NineTen' for accessing questions 9 and 10
-        if (!currentGroupKey.endsWith('NineTen')) {
-            currentGroupKey = currentGroupKey + 'NineTen';
-        }
-        
-        // Fetch and display question 9 or 10 directly, bypassing the repeat issue
-        let nextQuestionIndex = questionCount - 8; // This will be 1 for question 9, and potentially 2 for question 10 if incremented correctly
-        const groupQuestions = questionGroups[currentGroupKey];
-        
-        // Ensure the index is within bounds for the NineTen group
-        if (nextQuestionIndex < groupQuestions.length) {
-            const questionData = groupQuestions[nextQuestionIndex - 1]; // Fetch the appropriate question directly
-            displayQuestionContent(questionData);
-            questionCount = 9 + nextQuestionIndex - 1; // Correctly update questionCount to reflect the displayed question
-            return;
-        }
-    }
+    // If fewer than 9 questions have been asked and no final character is determined,
+    // redirect to question 9 or 10 based on the current state.
+    if (questionCount < 9 && !finalCharacter) {
+        // Adjust for correct group key to fetch question 9
+        const correctGroupKeyForNineTen = currentGroupKey.includes('NineTen') ? currentGroupKey : currentGroupKey + 'NineTen';
+        currentGroupKey = correctGroupKeyForNineTen; // Ensure we are targeting the NineTen group.
 
-    // Update the question counter to show "Final Result" surrounded by heart emojis
-    const questionCounter = document.getElementById('question-counter');
-    questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
+        // Directly setting questionCount to 8 to enforce showing question 9 next
+        questionCount = 8;
 
-    // Hide the question and answers from the display
-    document.getElementById('question').style.display = 'none';
-    document.getElementById('answers').style.display = 'none';
+        // Manually invoke displayQuestion to show the next question in the sequence,
+        // which should now be question 9 due to the adjusted questionCount.
+        displayQuestion();
+    } else {
+        // Update the question counter to show "Final Result" surrounded by heart emojis
+        const questionCounter = document.getElementById('question-counter');
+        questionCounter.innerHTML = `<h2>❤️ Final Result ❤️</h2>`;
 
-    // Display the final result in the result container
-    const resultContainer = document.getElementById('result');
-    const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
-    resultContainer.innerHTML = `<h2>${resultText}</h2>`;
+        // Hide the question and answers from the display
+        document.getElementById('question').style.display = 'none';
+        document.getElementById('answers').style.display = 'none';
 
-    // Display the image for the final character, if one is determined
-    if (finalCharacter) {
-        const imagePath = characterImageMap[finalCharacter];
-        if (imagePath) {
-            const image = document.createElement('img');
-            image.src = imagePath;
-            image.alt = finalCharacter;
-            resultContainer.appendChild(image);
-        } else {
-            console.log('No image found for ' + finalCharacter);
+        // Display the final result in the result container
+        const resultContainer = document.getElementById('result');
+        const resultText = finalCharacter ? `Your result is: ${finalCharacter}!` : "No final character determined.";
+        resultContainer.innerHTML = `<h2>${resultText}</h2>`;
+
+        // Display the image for the final character, if one is determined
+        if (finalCharacter) {
+            const imagePath = characterImageMap[finalCharacter];
+            if (imagePath) {
+                const image = document.createElement('img');
+                image.src = imagePath;
+                image.alt = finalCharacter;
+                resultContainer.appendChild(image);
+            } else {
+                console.log('No image found for ' + finalCharacter);
+            }
         }
     }
 }
