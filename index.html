@@ -690,7 +690,28 @@ function displayQuestion10() {
                 { text: "Overwhelming intellect", person: "Naoto Shirogane" },
                 { text: "A healthy appetite", person: "Rei" },
             ];
-        } // Add conditions for group2NineTen, group3NineTen, and group4NineTen as needed
+        } else if (currentGroupKey.startsWith('group2')) {
+            questionText = "Your preferred type in a nutshell?";
+            answers = [
+                { text: "Youth that tries to act mature", person: "Ken Amada" },
+                { text: "A pure heart", person: "Teddie" },
+                { text: "Overwhelming adorableness", person: "Koromaru" },
+            ];
+        } else if (currentGroupKey.startsWith('group3')) {
+            questionText = "What kind of partner are you secretly longing for?";
+            answers = [
+                { text: "Sharp-tongued, yet lonely", person: "Yukari Takeba" },
+                { text: "An energetic crybaby", person: "Chie Satonaka" },
+                { text: "Abs of literal steel", person: "Aigis" },
+            ];
+        } else if (currentGroupKey.startsWith('group4')) {
+            questionText = "Who would be your ideal soulmate?";
+            answers = [
+                { text: "Somewhat disappointing good looks", person: "Yosuke Hanamura" },
+                { text: "A knight who protects the weak", person: "Zen" },
+                { text: "A gentle youngest of siblings", person: "Theodore" },
+            ];
+        }
 
         // Display the constructed Question 10
         if (questionText && answers.length > 0) {
