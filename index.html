@@ -503,30 +503,30 @@ function updateQuestionCounter() {
 }
 
 const characterImageMap = {
-    "Fuuka Yamagishi": "images/Fuuka_Yamagishi.gif",
-    "Margaret": "images/Margaret.jpg",
-    "Marie": "images/Marie.jpg",
-    "Naoto Shirogane": "images/Naoto_Shirogane.jpg",
-    "Rei": "images/Rei.jpg",
-    "Yukiko Amagi": "images/Yukiko_Amagi.jpg",
-    "Akihiko Sanada": "images/Akihiko_Sanada.jpg",
-    "Junpei Iori": "images/Junpei_Iori.png",
-    "Ken Amada": "images/Ken_Amada.jpg",
-    "Koromaru": "images/Koromaru.jpg",
-    "Yu Narukami": "images/Yu_Narukami.jpg",
-    "Teddie": "images/Teddie.jpg",
-    "Aigis": "images/Aigis.jpg",
-    "Chie Satonaka": "images/Chie_Satonaka.jpg",
-    "Elizabeth": "images/Elizabeth.jpg",
-    "Mitsuru Kirijo": "images/Mitsuru_Kirijo.jpg",
-    "Rise Kujikawa": "images/Rise_Kujikawa.jpg",
-    "Yukari Takeba": "images/Yukari_Takeba.jpg",
-    "Kanji Tatsumi": "images/Kanji_Tatsumi.jpg",
-    "Makoto Yuki": "images/Makoto_Yuki.jpg",
-    "Shinjiro Aragaki": "images/Shinjiro_Aragaki.jpg",
-    "Theodore": "images/Theodore.jpg",
-    "Zen": "images/Zen.jpg",
-    "Yosuke Hanamura": "images/Yosuke_Hanamura.jpg"
+    "Fuuka Yamagishi": ["images/Fuuka_Yamagishi.gif"],
+    "Margaret": ["images/Margaret.jpg"],
+    "Marie": ["images/Marie.jpg"],
+    "Naoto Shirogane": ["images/Naoto_Shirogane.jpg"],
+    "Rei": ["images/Rei.jpg"],
+    "Yukiko Amagi": ["images/Yukiko_Amagi.jpg"],
+    "Akihiko Sanada": ["images/Akihiko_Sanada.jpg"],
+    "Junpei Iori": ["images/Junpei_Iori.png"],
+    "Ken Amada": ["images/Ken_Amada.png"],
+    "Koromaru": ["images/Koromaru.jpg"],
+    "Yu Narukami": ["images/Yu_Narukami.png"],
+    "Teddie": ["images/Teddie.jpg"],
+    "Aigis": ["images/Aigis.png", "images/Aigis_1.png"],
+    "Chie Satonaka": ["images/Chie_Satonaka.jpg"],
+    "Elizabeth": ["images/Elizabeth.jpg"],
+    "Mitsuru Kirijo": ["images/Mitsuru_Kirijo.jpg"],
+    "Rise Kujikawa": ["images/Rise_Kujikawa.jpg"],
+    "Yukari Takeba": ["images/Yukari_Takeba.jpg"],
+    "Kanji Tatsumi": ["images/Kanji_Tatsumi.jpg"],
+    "Makoto Yuki": ["images/Makoto_Yuki.png"],
+    "Shinjiro Aragaki": ["images/Shinjiro_Aragaki.jpg"],
+    "Theodore": ["images/Theodore.jpeg"],
+    "Zen": ["images/Zen.jpg"],
+    "Yosuke Hanamura": ["images/Yosuke_Hanamura.png"]
 };
 
 function displayFinalOutput() {
@@ -640,14 +640,18 @@ function displayFinalOutput() {
 
     // Display the image for the final character, if one is determined
     if (finalCharacter) {
-        const imagePath = characterImageMap[finalCharacter];
-        if (imagePath) {
+        const images = characterImageMap[finalCharacter];
+        if (images && images.length > 0) {
+            // Randomly select an image from the array
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const selectedImage = images[randomIndex];
+
             const image = document.createElement('img');
-            image.src = imagePath;
+            image.src = selectedImage;
             image.alt = finalCharacter;
-            resultContainer.appendChild(image);
+            document.getElementById('result').appendChild(image);
         } else {
-            console.log('No image found for ' + finalCharacter);
+            console.log('No images found for ' + finalCharacter);
         }
     }
 }
