@@ -399,8 +399,8 @@ function getQuestionFromGroup(groupKey) {
     let group = questionGroups[groupKey];
     let questionData;
 
-    // Shuffle the questions if the group is an array and not the starter or 'randomQuestions' group
-    if (Array.isArray(group) && groupKey !== 'starter' && groupKey !== 'randomQuestions') {
+    // Shuffle the questions if the group is an array and not the starter group
+    if (Array.isArray(group) && groupKey !== 'starter') {
         shuffleArray(group);
     }
 
