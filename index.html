@@ -373,7 +373,7 @@ function displayQuestion() {
 }
 
 function handleAnswer(answer) {
-    if (answer.text === "Something else...") {
+    if (answer.text === "Something else..." && questionCount == 9) {
         // Update currentGroupKey if necessary or perform other actions before displaying Question 10
         displayQuestion10(); // Call the function to display Question 10
         return; // Exit the function to avoid further actions
